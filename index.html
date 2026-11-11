@@ -58,6 +58,21 @@ button{cursor:pointer;touch-action:manipulation}
 .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1;margin:0;margin-right:auto}
 .brand span{color:var(--accent)}
+.homeb{border:3px solid var(--line);background:var(--surface);border-radius:999px;padding:10px 18px;font-family:var(--display);font-weight:800;font-size:1.05rem;min-height:52px}
+.home{display:flex;flex-direction:column;gap:24px;padding-top:12px}
+.hero{font-family:var(--display);font-weight:800;font-size:clamp(2.8rem,9vw,4.6rem);line-height:1;margin:0;letter-spacing:-.01em}
+.hero span{color:var(--accent)}
+.lead{margin:0;font-size:clamp(1.15rem,2.6vw,1.4rem);line-height:1.5;max-width:56ch;font-weight:600}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.cta .go{margin:0;font-size:1.6rem;padding:16px 34px;min-height:72px}
+.how{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.how li{background:var(--surface);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.how b{font-family:var(--display);font-size:1.25rem;line-height:1.2}
+.how .num{font-family:var(--display);font-weight:800;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-size:1.1rem;line-height:1}
+.worlds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.worlds figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.worlds canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:14px}
+.worlds figcaption{font-weight:800;font-size:.92rem;line-height:1.2}
 .steps{display:flex;gap:8px;align-items:center}
 .steps i{width:14px;height:14px;border-radius:50%;background:var(--line)}
 .steps i.done{background:var(--accent)}
@@ -71,17 +86,17 @@ button{cursor:pointer;touch-action:manipulation}
 .note button{margin-left:auto}
 
 .grid{display:grid;gap:16px}
-.grid.big{grid-template-columns:repeat(2,minmax(0,1fr))}
-.grid.med{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.grid.big{grid-template-columns:repeat(2,minmax(0,1fr));max-width:max(320px, calc((100vh - 390px) * 1.78))}
+.grid.med{grid-template-columns:repeat(auto-fill,minmax(128px,1fr))}
 .card{position:relative;border:4px solid var(--line);background:var(--surface);border-radius:var(--r);padding:0;overflow:hidden;
   display:flex;flex-direction:column;text-align:left;min-width:0;transition:transform .15s}
 .card canvas{display:block;width:100%;height:auto;aspect-ratio:16/9}
 .card b{font-family:var(--display);font-weight:800;font-size:1.3rem;line-height:1.15;padding:10px 14px 12px}
 .card[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 6px 0 var(--accent)}
 .card:active,.tile:active{transform:scale(.97)}
-.tile{border:4px dashed var(--line);background:transparent;border-radius:var(--r);padding:16px 8px 12px;min-height:150px;
+.tile{border:4px dashed var(--line);background:transparent;border-radius:var(--r);padding:10px 6px;min-height:116px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;font-weight:800;font-size:1rem;line-height:1.2;transition:transform .15s}
-.tile .em{font-size:3.4rem;line-height:1.1}
+.tile .em{font-size:2.7rem;line-height:1.1}
 .tile[aria-pressed="true"]{border:4px solid var(--accent);background:var(--surface);box-shadow:0 6px 0 var(--accent)}
 .tile.full{opacity:.4}
 .sub{font-family:var(--display);font-weight:800;font-size:1.3rem;margin:8px 0 0}
@@ -122,22 +137,39 @@ footer p{margin:0;max-width:85ch}
   .left{position:static}
 }
 @media (max-width:480px){
-  .grid.big{grid-template-columns:minmax(0,1fr)}
-  .grid.med{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .tile{min-height:120px}.tile .em{font-size:2.6rem}
+  .page{gap:12px;padding-block:10px 16px}
+  #view{gap:12px!important}
+  .grid{gap:10px}
+  .grid.med{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{border-width:3px;border-radius:16px}
+  .card b{font-size:1rem;padding:6px 10px 8px}
+  .tile{min-height:88px;padding:8px 4px;border-width:3px;border-radius:16px;font-size:.78rem;gap:2px}
+  .tile .em{font-size:2rem}
+  .tile[aria-pressed="true"]{border-width:3px;box-shadow:0 4px 0 var(--accent)}
+  .q{gap:8px}.q h2{font-size:1.45rem}.q .count{font-size:1.1rem}
+  .say{width:42px;height:42px;font-size:1.1rem}
+  .sub{font-size:1.1rem;margin:0}
+  .field{font-size:1.3rem;padding:10px 16px;border-width:3px}
+  .go,.back{min-height:52px;font-size:1.15rem;padding:10px 20px}
+  .homeb{min-height:44px;padding:6px 14px;font-size:.95rem}
+  .brand{font-size:1.35rem}
     .steps{display:none}
+  .how{grid-template-columns:minmax(0,1fr)}
+  .worlds{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cta .go{width:100%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="page u-minecraft" id="app">
-  <header class="bar">
+  <header class="bar" id="bar">
+    <button class="homeb" id="home" type="button">🏠 Accueil</button>
     <h1 class="brand">À toi <span>l'histoire</span></h1>
     <div class="steps" id="steps" aria-hidden="true"></div>
   </header>
   <main id="view" style="display:flex;flex-direction:column;gap:20px;min-width:0"></main>
-  <footer>
+  <footer id="foot">
     <p>Prototype. Histoires écrites à l'avance, personnages originaux, illustrations dessinées par le code. Roblox, Minecraft et Gabby et la maison magique sont des marques de leurs propriétaires respectifs ; ce site n'est pas affilié à eux.</p>
   </footer>
 </div>
@@ -149,11 +181,11 @@ const AGES = [
   {l:"9–12 ans", wpm:138, rate:1, hint:"Histoire plus riche, vocabulaire plus varié, rythme naturel."}
 ];
 const VOICES = [
-  {k:"papa", l:"Papa", g:"m", alt:0, pitch:.85, rate:1},
-  {k:"maman", l:"Maman", g:"f", alt:0, pitch:1.1, rate:1},
-  {k:"mamie", l:"Mamie", g:"f", alt:1, pitch:.9, rate:.88},
-  {k:"papi", l:"Papi", g:"m", alt:1, pitch:.6, rate:.86},
-  {k:"enfant", l:"Enfant", g:"f", alt:2, pitch:1.7, rate:1.06}
+  {k:"papa", l:"Papa", g:"m", alt:0, pitch:.92, rate:.97},
+  {k:"maman", l:"Maman", g:"f", alt:0, pitch:1.04, rate:.97},
+  {k:"mamie", l:"Mamie", g:"f", alt:1, pitch:.97, rate:.9},
+  {k:"papi", l:"Papi", g:"m", alt:1, pitch:.84, rate:.88},
+  {k:"enfant", l:"Enfant", g:"f", alt:2, pitch:1.28, rate:1.02}
 ];
 const C = (e,n)=>({e,n});
 const O = (e,n,un,le)=>({e,n,un,le});
@@ -859,9 +891,13 @@ const synth = window.speechSynthesis || null;
 const MALE = /thomas|paul|henri|claude|daniel|nicolas|jacques|antoine|mathieu|guillaume|male\b|homme|masculin/i;
 const FEMALE = /am[ée]lie|marie|audrey|julie|hortense|denise|[ée]lo[iï]se|c[ée]line|aur[ée]lie|virginie|sylvie|l[ée]a|female|femme|f[ée]minin/i;
 function frVoices(){ try{ return synth ? synth.getVoices().filter(v=>/^fr/i.test(v.lang)) : []; }catch(e){ return []; } }
-function pickVoice(p){ const all=frVoices(); if(!all.length) return null;
+// Les voix « naturelles » ou en ligne sonnent moins robotiques : on les préfère quand l'appareil en propose.
+const GOOD = /natural|neural|premium|enhanced|am[ée]lior|online|wavenet|google/i;
+const quality = v => (GOOD.test(v.name)?4:0) + (v.localService===false?2:0) + (/^fr[-_]FR/i.test(v.lang)?1:0);
+function pickVoice(p){ const all=frVoices().sort((x,y)=>quality(y)-quality(x)); if(!all.length) return null;
   const m=all.filter(v=>MALE.test(v.name)&&!FEMALE.test(v.name)), f=all.filter(v=>FEMALE.test(v.name));
-  const pool=p.g==="m"?m:f, use=pool.length?pool:all; return use[p.alt%use.length]; }
+  const pool=p.g==="m"?m:f; if(pool.length) return pool[p.alt%pool.length];
+  const best=all.filter(v=>quality(v)===quality(all[0])); return best[p.alt%best.length]; }
 function utter(text,p,amb){ const ut=new SpeechSynthesisUtterance(text.replace(/[«»]/g," ")); const v=pickVoice(p); if(v) ut.voice=v;
   ut.lang=v?v.lang:"fr-FR"; ut.pitch=Math.max(.1,p.pitch+(amb?amb.pitch:0)); ut.rate=p.rate*AGES[S.age].rate*(amb?amb.rate:1); return ut; }
 function sayOnce(text){ if(!synth) return; stopReading(); synth.speak(utter(text, VOICES.find(v=>v.k===S.voice)||VOICES[1])); }
@@ -872,7 +908,7 @@ function speak(){
   ps.forEach((p,i)=>p.classList.toggle("now",i===R.idx));
   ps[R.idx].scrollIntoView({block:"nearest",behavior:"smooth"});
   const ut=utter(ps[R.idx].textContent, VOICES.find(v=>v.k===S.voice)||VOICES[1], AMB[S.amb]), tok=++R.tok;
-  ut.onend=()=>{ if(tok!==R.tok||!R.on) return; R.idx++; speak(); };
+  ut.onend=()=>{ if(tok!==R.tok||!R.on) return; R.idx++; setTimeout(()=>{ if(tok===R.tok&&R.on) speak(); },280); };
   ut.onerror=e=>{ if(tok!==R.tok||e.error==="interrupted"||e.error==="canceled") return; R.on=false; R.msg="La lecture vocale est bloquée dans ce navigateur."; render(); };
   synth.speak(ut);
 }
@@ -880,7 +916,8 @@ function speak(){
 const AGE_ICON = ["🐣","🦊","🚀"];
 const STEPS = ["Comment t'appelles-tu ?","Choisis ton monde","Où vas-tu ?","Qui vient avec toi ?","Que mets-tu dans ton sac ?","Quel temps fait-il ?","Qui raconte ?"];
 function go(step){ stopReading(); S.step=step; S.view="wiz"; save(); render(); window.scrollTo(0,0); }
-function openBook(){ stopReading(); S.view="book"; S.page=0; R.msg=""; save(); render(); window.scrollTo(0,0); }
+function goHome(){ stopReading(); S.view="home"; render(); window.scrollTo(0,0); }
+function openBook(){ stopReading(); S.view="book"; S.made=true; S.page=0; R.msg=""; save(); render(); window.scrollTo(0,0); }
 
 function tilesFor(items, sel){
   return h("div",{class:"grid med"}, items.map((it,i)=>{ const on=sel.includes(i);
@@ -892,6 +929,21 @@ function pickTiles(map, cur, set){
   return h("div",{class:"grid med"}, Object.entries(map).map(([k,v])=>h("button",{class:"tile",type:"button","aria-pressed":k===cur,onclick:()=>{ set(k); save(); render(); }}, h("span",{class:"em"},v.e), h("span",null,v.n))));
 }
 function head(title, count){ return h("div",{class:"q"}, h("button",{class:"say",type:"button","aria-label":"Écouter la question",onclick:()=>sayOnce(title)},"🔊"), h("h2",null,title), count?h("span",{class:"count"},count):null); }
+
+function viewHome(){
+  const HOW=[["Tu choisis","Un monde, un lieu, jusqu'à trois amis et trois objets à emporter."],
+             ["Tu règles l'ambiance","Le temps qu'il fait, et une histoire rigolote, toute douce ou pleine de mystère."],
+             ["Tu écoutes","Cinq chapitres illustrés, racontés par la voix de ton choix."]];
+  return h("div",{class:"home"},
+    h("h2",{class:"hero"},"À toi ",h("span",null,"l'histoire")),
+    h("p",{class:"lead"},"Ici, c'est toi le héros. Choisis ton monde, tes amis et tes objets : ton histoire s'écrit avec ton prénom, puis elle se lit ou s'écoute en 5 à 7 minutes."),
+    h("div",{class:"cta"},
+      h("button",{class:"go",type:"button",onclick:()=>go(0)},"✨ Créer mon histoire"),
+      S.made?h("button",{class:"back",type:"button",onclick:()=>{ stopReading(); S.view="book"; R.msg=""; render(); window.scrollTo(0,0); }},"📖 Relire ma dernière histoire"):null),
+    h("ol",{class:"how"}, HOW.map(([t,d],i)=>h("li",null,h("span",{class:"num"},String(i+1)),h("b",null,t),h("span",null,d)))),
+    h("p",{class:"sub"},"4 mondes, 8 aventures"),
+    h("div",{class:"worlds"}, Object.entries(U).map(([k,t])=>{ const cv=canvas(320,180); scene(cv,k,0,"soleil",0,null); return h("figure",null,cv,h("figcaption",null,t.n)); })));
+}
 
 function viewWiz(){
   const u=U[S.u], out=[], st=S.step; let ready=true;
@@ -948,13 +1000,15 @@ function render(){
   const st=$("steps"); st.textContent="";
   if(S.view==="wiz") STEPS.forEach((_,i)=>st.append(h("i",{class:i<S.step?"done":i===S.step?"on":""})));
   const v=$("view"); v.textContent="";
-  v.append(...[].concat(S.view==="book"?viewBook():viewWiz()));
+  $("bar").hidden = S.view==="home"; $("foot").hidden = S.view!=="home";
+  v.append(...[].concat(S.view==="book"?viewBook():S.view==="home"?viewHome():viewWiz()));
 }
 if(synth && synth.addEventListener) synth.addEventListener("voiceschanged",()=>{});
 window.addEventListener("pagehide",()=>{ if(synth) synth.cancel(); });
 if(!VOICES.some(v=>v.k===S.voice)) S.voice="maman";
 if(!(S.step>=0 && S.step<STEPS.length)) S.step=0;
-S.view = S.view==="book" ? "book" : "wiz"; R.on=false;
+S.view="home"; R.on=false;
+$("home").onclick=goHome;
 render();
 </script>
 <script>
