@@ -58,6 +58,21 @@ button{cursor:pointer;touch-action:manipulation}
 .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1;margin:0;margin-right:auto}
 .brand span{color:var(--accent)}
+.homeb{border:3px solid var(--line);background:var(--surface);border-radius:999px;padding:10px 18px;font-family:var(--display);font-weight:800;font-size:1.05rem;min-height:52px}
+.home{display:flex;flex-direction:column;gap:24px;padding-top:12px}
+.hero{font-family:var(--display);font-weight:800;font-size:clamp(2.8rem,9vw,4.6rem);line-height:1;margin:0;letter-spacing:-.01em}
+.hero span{color:var(--accent)}
+.lead{margin:0;font-size:clamp(1.15rem,2.6vw,1.4rem);line-height:1.5;max-width:56ch;font-weight:600}
+.cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.cta .go{margin:0;font-size:1.6rem;padding:16px 34px;min-height:72px}
+.how{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.how li{background:var(--surface);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.how b{font-family:var(--display);font-size:1.25rem;line-height:1.2}
+.how .num{font-family:var(--display);font-weight:800;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--on-accent);font-size:1.1rem;line-height:1}
+.worlds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.worlds figure{margin:0;display:flex;flex-direction:column;gap:6px;min-width:0}
+.worlds canvas{display:block;width:100%;height:auto;aspect-ratio:16/9;border-radius:14px}
+.worlds figcaption{font-weight:800;font-size:.92rem;line-height:1.2}
 .steps{display:flex;gap:8px;align-items:center}
 .steps i{width:14px;height:14px;border-radius:50%;background:var(--line)}
 .steps i.done{background:var(--accent)}
@@ -126,13 +141,17 @@ footer p{margin:0;max-width:85ch}
   .grid.med{grid-template-columns:repeat(2,minmax(0,1fr))}
   .tile{min-height:120px}.tile .em{font-size:2.6rem}
     .steps{display:none}
+  .how{grid-template-columns:minmax(0,1fr)}
+  .worlds{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cta .go{width:100%}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
 <body>
 <div class="page u-minecraft" id="app">
-  <header class="bar">
+  <header class="bar" id="bar">
+    <button class="homeb" id="home" type="button">🏠 Accueil</button>
     <h1 class="brand">À toi <span>l'histoire</span></h1>
     <div class="steps" id="steps" aria-hidden="true"></div>
   </header>
@@ -884,7 +903,8 @@ function speak(){
 const AGE_ICON = ["🐣","🦊","🚀"];
 const STEPS = ["Comment t'appelles-tu ?","Choisis ton monde","Où vas-tu ?","Qui vient avec toi ?","Que mets-tu dans ton sac ?","Quel temps fait-il ?","Qui raconte ?"];
 function go(step){ stopReading(); S.step=step; S.view="wiz"; save(); render(); window.scrollTo(0,0); }
-function openBook(){ stopReading(); S.view="book"; S.page=0; R.msg=""; save(); render(); window.scrollTo(0,0); }
+function goHome(){ stopReading(); S.view="home"; render(); window.scrollTo(0,0); }
+function openBook(){ stopReading(); S.view="book"; S.made=true; S.page=0; R.msg=""; save(); render(); window.scrollTo(0,0); }
 
 function tilesFor(items, sel){
   return h("div",{class:"grid med"}, items.map((it,i)=>{ const on=sel.includes(i);
@@ -896,6 +916,21 @@ function pickTiles(map, cur, set){
   return h("div",{class:"grid med"}, Object.entries(map).map(([k,v])=>h("button",{class:"tile",type:"button","aria-pressed":k===cur,onclick:()=>{ set(k); save(); render(); }}, h("span",{class:"em"},v.e), h("span",null,v.n))));
 }
 function head(title, count){ return h("div",{class:"q"}, h("button",{class:"say",type:"button","aria-label":"Écouter la question",onclick:()=>sayOnce(title)},"🔊"), h("h2",null,title), count?h("span",{class:"count"},count):null); }
+
+function viewHome(){
+  const HOW=[["Tu choisis","Un monde, un lieu, jusqu'à trois amis et trois objets à emporter."],
+             ["Tu règles l'ambiance","Le temps qu'il fait, et une histoire rigolote, toute douce ou pleine de mystère."],
+             ["Tu écoutes","Cinq chapitres illustrés, racontés par la voix de ton choix."]];
+  return h("div",{class:"home"},
+    h("h2",{class:"hero"},"À toi ",h("span",null,"l'histoire")),
+    h("p",{class:"lead"},"Ici, c'est toi le héros. Choisis ton monde, tes amis et tes objets : ton histoire s'écrit avec ton prénom, puis elle se lit ou s'écoute en 5 à 7 minutes."),
+    h("div",{class:"cta"},
+      h("button",{class:"go",type:"button",onclick:()=>go(0)},"✨ Créer mon histoire"),
+      S.made?h("button",{class:"back",type:"button",onclick:()=>{ stopReading(); S.view="book"; R.msg=""; render(); window.scrollTo(0,0); }},"📖 Relire ma dernière histoire"):null),
+    h("ol",{class:"how"}, HOW.map(([t,d],i)=>h("li",null,h("span",{class:"num"},String(i+1)),h("b",null,t),h("span",null,d)))),
+    h("p",{class:"sub"},"4 mondes, 8 aventures"),
+    h("div",{class:"worlds"}, Object.entries(U).map(([k,t])=>{ const cv=canvas(320,180); scene(cv,k,0,"soleil",0,null); return h("figure",null,cv,h("figcaption",null,t.n)); })));
+}
 
 function viewWiz(){
   const u=U[S.u], out=[], st=S.step; let ready=true;
@@ -952,13 +987,15 @@ function render(){
   const st=$("steps"); st.textContent="";
   if(S.view==="wiz") STEPS.forEach((_,i)=>st.append(h("i",{class:i<S.step?"done":i===S.step?"on":""})));
   const v=$("view"); v.textContent="";
-  v.append(...[].concat(S.view==="book"?viewBook():viewWiz()));
+  $("bar").hidden = S.view==="home";
+  v.append(...[].concat(S.view==="book"?viewBook():S.view==="home"?viewHome():viewWiz()));
 }
 if(synth && synth.addEventListener) synth.addEventListener("voiceschanged",()=>{});
 window.addEventListener("pagehide",()=>{ if(synth) synth.cancel(); });
 if(!VOICES.some(v=>v.k===S.voice)) S.voice="maman";
 if(!(S.step>=0 && S.step<STEPS.length)) S.step=0;
-S.view = S.view==="book" ? "book" : "wiz"; R.on=false;
+S.view="home"; R.on=false;
+$("home").onclick=goHome;
 render();
 </script>
 <script>
