@@ -149,11 +149,11 @@ const AGES = [
   {l:"9–12 ans", wpm:138, rate:1, hint:"Histoire plus riche, vocabulaire plus varié, rythme naturel."}
 ];
 const VOICES = [
-  {k:"papa", l:"Papa", g:"m", alt:0, pitch:.85, rate:1},
-  {k:"maman", l:"Maman", g:"f", alt:0, pitch:1.1, rate:1},
-  {k:"mamie", l:"Mamie", g:"f", alt:1, pitch:.9, rate:.88},
-  {k:"papi", l:"Papi", g:"m", alt:1, pitch:.6, rate:.86},
-  {k:"enfant", l:"Enfant", g:"f", alt:2, pitch:1.7, rate:1.06}
+  {k:"papa", l:"Papa", g:"m", alt:0, pitch:.92, rate:.97},
+  {k:"maman", l:"Maman", g:"f", alt:0, pitch:1.04, rate:.97},
+  {k:"mamie", l:"Mamie", g:"f", alt:1, pitch:.97, rate:.9},
+  {k:"papi", l:"Papi", g:"m", alt:1, pitch:.84, rate:.88},
+  {k:"enfant", l:"Enfant", g:"f", alt:2, pitch:1.28, rate:1.02}
 ];
 const C = (e,n)=>({e,n});
 const O = (e,n,un,le)=>({e,n,un,le});
@@ -859,9 +859,13 @@ const synth = window.speechSynthesis || null;
 const MALE = /thomas|paul|henri|claude|daniel|nicolas|jacques|antoine|mathieu|guillaume|male\b|homme|masculin/i;
 const FEMALE = /am[ée]lie|marie|audrey|julie|hortense|denise|[ée]lo[iï]se|c[ée]line|aur[ée]lie|virginie|sylvie|l[ée]a|female|femme|f[ée]minin/i;
 function frVoices(){ try{ return synth ? synth.getVoices().filter(v=>/^fr/i.test(v.lang)) : []; }catch(e){ return []; } }
-function pickVoice(p){ const all=frVoices(); if(!all.length) return null;
+// Les voix « naturelles » ou en ligne sonnent moins robotiques : on les préfère quand l'appareil en propose.
+const GOOD = /natural|neural|premium|enhanced|am[ée]lior|online|wavenet|google/i;
+const quality = v => (GOOD.test(v.name)?4:0) + (v.localService===false?2:0) + (/^fr[-_]FR/i.test(v.lang)?1:0);
+function pickVoice(p){ const all=frVoices().sort((x,y)=>quality(y)-quality(x)); if(!all.length) return null;
   const m=all.filter(v=>MALE.test(v.name)&&!FEMALE.test(v.name)), f=all.filter(v=>FEMALE.test(v.name));
-  const pool=p.g==="m"?m:f, use=pool.length?pool:all; return use[p.alt%use.length]; }
+  const pool=p.g==="m"?m:f; if(pool.length) return pool[p.alt%pool.length];
+  const best=all.filter(v=>quality(v)===quality(all[0])); return best[p.alt%best.length]; }
 function utter(text,p,amb){ const ut=new SpeechSynthesisUtterance(text.replace(/[«»]/g," ")); const v=pickVoice(p); if(v) ut.voice=v;
   ut.lang=v?v.lang:"fr-FR"; ut.pitch=Math.max(.1,p.pitch+(amb?amb.pitch:0)); ut.rate=p.rate*AGES[S.age].rate*(amb?amb.rate:1); return ut; }
 function sayOnce(text){ if(!synth) return; stopReading(); synth.speak(utter(text, VOICES.find(v=>v.k===S.voice)||VOICES[1])); }
@@ -872,7 +876,7 @@ function speak(){
   ps.forEach((p,i)=>p.classList.toggle("now",i===R.idx));
   ps[R.idx].scrollIntoView({block:"nearest",behavior:"smooth"});
   const ut=utter(ps[R.idx].textContent, VOICES.find(v=>v.k===S.voice)||VOICES[1], AMB[S.amb]), tok=++R.tok;
-  ut.onend=()=>{ if(tok!==R.tok||!R.on) return; R.idx++; speak(); };
+  ut.onend=()=>{ if(tok!==R.tok||!R.on) return; R.idx++; setTimeout(()=>{ if(tok===R.tok&&R.on) speak(); },280); };
   ut.onerror=e=>{ if(tok!==R.tok||e.error==="interrupted"||e.error==="canceled") return; R.on=false; R.msg="La lecture vocale est bloquée dans ce navigateur."; render(); };
   synth.speak(ut);
 }
