@@ -86,17 +86,17 @@ button{cursor:pointer;touch-action:manipulation}
 .note button{margin-left:auto}
 
 .grid{display:grid;gap:16px}
-.grid.big{grid-template-columns:repeat(2,minmax(0,1fr))}
-.grid.med{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.grid.big{grid-template-columns:repeat(2,minmax(0,1fr));max-width:max(320px, calc((100vh - 390px) * 1.78))}
+.grid.med{grid-template-columns:repeat(auto-fill,minmax(128px,1fr))}
 .card{position:relative;border:4px solid var(--line);background:var(--surface);border-radius:var(--r);padding:0;overflow:hidden;
   display:flex;flex-direction:column;text-align:left;min-width:0;transition:transform .15s}
 .card canvas{display:block;width:100%;height:auto;aspect-ratio:16/9}
 .card b{font-family:var(--display);font-weight:800;font-size:1.3rem;line-height:1.15;padding:10px 14px 12px}
 .card[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 6px 0 var(--accent)}
 .card:active,.tile:active{transform:scale(.97)}
-.tile{border:4px dashed var(--line);background:transparent;border-radius:var(--r);padding:16px 8px 12px;min-height:150px;
+.tile{border:4px dashed var(--line);background:transparent;border-radius:var(--r);padding:10px 6px;min-height:116px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;font-weight:800;font-size:1rem;line-height:1.2;transition:transform .15s}
-.tile .em{font-size:3.4rem;line-height:1.1}
+.tile .em{font-size:2.7rem;line-height:1.1}
 .tile[aria-pressed="true"]{border:4px solid var(--accent);background:var(--surface);box-shadow:0 6px 0 var(--accent)}
 .tile.full{opacity:.4}
 .sub{font-family:var(--display);font-weight:800;font-size:1.3rem;margin:8px 0 0}
@@ -137,9 +137,22 @@ footer p{margin:0;max-width:85ch}
   .left{position:static}
 }
 @media (max-width:480px){
-  .grid.big{grid-template-columns:minmax(0,1fr)}
-  .grid.med{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .tile{min-height:120px}.tile .em{font-size:2.6rem}
+  .page{gap:12px;padding-block:10px 16px}
+  #view{gap:12px!important}
+  .grid{gap:10px}
+  .grid.med{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .card{border-width:3px;border-radius:16px}
+  .card b{font-size:1rem;padding:6px 10px 8px}
+  .tile{min-height:88px;padding:8px 4px;border-width:3px;border-radius:16px;font-size:.78rem;gap:2px}
+  .tile .em{font-size:2rem}
+  .tile[aria-pressed="true"]{border-width:3px;box-shadow:0 4px 0 var(--accent)}
+  .q{gap:8px}.q h2{font-size:1.45rem}.q .count{font-size:1.1rem}
+  .say{width:42px;height:42px;font-size:1.1rem}
+  .sub{font-size:1.1rem;margin:0}
+  .field{font-size:1.3rem;padding:10px 16px;border-width:3px}
+  .go,.back{min-height:52px;font-size:1.15rem;padding:10px 20px}
+  .homeb{min-height:44px;padding:6px 14px;font-size:.95rem}
+  .brand{font-size:1.35rem}
     .steps{display:none}
   .how{grid-template-columns:minmax(0,1fr)}
   .worlds{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -156,7 +169,7 @@ footer p{margin:0;max-width:85ch}
     <div class="steps" id="steps" aria-hidden="true"></div>
   </header>
   <main id="view" style="display:flex;flex-direction:column;gap:20px;min-width:0"></main>
-  <footer>
+  <footer id="foot">
     <p>Prototype. Histoires écrites à l'avance, personnages originaux, illustrations dessinées par le code. Roblox, Minecraft et Gabby et la maison magique sont des marques de leurs propriétaires respectifs ; ce site n'est pas affilié à eux.</p>
   </footer>
 </div>
@@ -987,7 +1000,7 @@ function render(){
   const st=$("steps"); st.textContent="";
   if(S.view==="wiz") STEPS.forEach((_,i)=>st.append(h("i",{class:i<S.step?"done":i===S.step?"on":""})));
   const v=$("view"); v.textContent="";
-  $("bar").hidden = S.view==="home";
+  $("bar").hidden = S.view==="home"; $("foot").hidden = S.view!=="home";
   v.append(...[].concat(S.view==="book"?viewBook():S.view==="home"?viewHome():viewWiz()));
 }
 if(synth && synth.addEventListener) synth.addEventListener("voiceschanged",()=>{});
