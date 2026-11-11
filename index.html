@@ -3,6 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1B2340">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
 <meta name="description" content="Des histoires personnalisées de 5 à 7 minutes dont votre enfant est le héros, à lire ou à écouter.">
 <title>À toi l'histoire</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap">
@@ -54,7 +58,6 @@ button{cursor:pointer;touch-action:manipulation}
 .bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{font-family:var(--display);font-weight:800;font-size:1.7rem;line-height:1;margin:0;margin-right:auto}
 .brand span{color:var(--accent)}
-.pill{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 16px;font-weight:800;font-size:.95rem}
 .steps{display:flex;gap:8px;align-items:center}
 .steps i{width:14px;height:14px;border-radius:50%;background:var(--line)}
 .steps i.done{background:var(--accent)}
@@ -76,8 +79,6 @@ button{cursor:pointer;touch-action:manipulation}
 .card b{font-family:var(--display);font-weight:800;font-size:1.3rem;line-height:1.15;padding:10px 14px 12px}
 .card[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 6px 0 var(--accent)}
 .card:active,.tile:active{transform:scale(.97)}
-.lock{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;background:var(--surface);display:grid;place-items:center;font-size:1.3rem}
-.card.locked canvas{filter:grayscale(.5) opacity(.85)}
 .tile{border:4px dashed var(--line);background:transparent;border-radius:var(--r);padding:16px 8px 12px;min-height:150px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;font-weight:800;font-size:1rem;line-height:1.2;transition:transform .15s}
 .tile .em{font-size:3.4rem;line-height:1.1}
@@ -112,31 +113,7 @@ button{cursor:pointer;touch-action:manipulation}
 .text p.now{background:var(--accent-soft);box-shadow:0 0 0 6px var(--accent-soft)}
 .text p:first-child::first-letter{font-family:var(--display);font-weight:800;font-size:2.2em;color:var(--accent);line-height:.9;padding-right:2px}
 
-/* Espace parent */
-.parent{display:flex;flex-direction:column;gap:18px;max-width:720px}
-.panel{background:var(--surface);border:2px solid var(--line);border-radius:var(--r);padding:20px;display:flex;flex-direction:column;gap:12px;min-width:0}
-.panel h3{font-family:var(--display);font-weight:800;font-size:1.3rem;margin:0}
-.panel p{margin:0;max-width:65ch}
-.muted{color:var(--muted);font-size:.92rem}
-.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.field{background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:10px 14px;font-weight:800;font-size:1.1rem;min-width:0;width:12em;max-width:100%}
-.seg{display:flex;flex-wrap:wrap;gap:6px}
-.seg button{border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:8px 14px;font-weight:800}
-.seg button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
-.btn{border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:800;padding:10px 18px}
-.btn.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
-.btn:disabled{opacity:.4;cursor:default}
-.plans{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
-.plan{border:2px solid var(--line);border-radius:16px;padding:14px;display:flex;flex-direction:column;gap:4px;min-width:0}
-.plan.cur{border-color:var(--accent);background:var(--accent-soft)}
-.plan b{font-family:var(--display);font-size:1.15rem}
-.price{font-family:var(--display);font-weight:800;font-size:1.5rem;font-variant-numeric:tabular-nums}
-.recs{display:flex;flex-direction:column;gap:8px}
-.rec{border:2px solid var(--line);border-radius:14px;padding:10px 12px;display:flex;flex-direction:column;gap:8px}
-.rec summary{font-weight:800;cursor:pointer}
-.rec .lines{font-size:.95rem;color:var(--muted);display:flex;flex-direction:column;gap:.4em;max-height:14em;overflow:auto}
-.rec .lines p{margin:0}
-.ok{color:var(--accent);font-weight:800}
+.field{background:var(--surface);border:4px solid var(--line);border-radius:var(--r);padding:16px 20px;font-family:var(--display);font-weight:800;font-size:1.7rem;width:100%;max-width:440px;min-width:0}
 footer{color:var(--muted);font-size:.8rem;border-top:2px solid var(--line);padding-top:12px}
 footer p{margin:0;max-width:85ch}
 
@@ -148,8 +125,7 @@ footer p{margin:0;max-width:85ch}
   .grid.big{grid-template-columns:minmax(0,1fr)}
   .grid.med{grid-template-columns:repeat(2,minmax(0,1fr))}
   .tile{min-height:120px}.tile .em{font-size:2.6rem}
-  .plans{grid-template-columns:minmax(0,1fr)}
-  .steps{display:none}
+    .steps{display:none}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -159,7 +135,6 @@ footer p{margin:0;max-width:85ch}
   <header class="bar">
     <h1 class="brand">À toi <span>l'histoire</span></h1>
     <div class="steps" id="steps" aria-hidden="true"></div>
-    <button class="pill" id="parents" type="button">🔒 Parents</button>
   </header>
   <main id="view" style="display:flex;flex-direction:column;gap:20px;min-width:0"></main>
   <footer>
@@ -752,22 +727,19 @@ const AMB = {
 
 const CHAPTERS = ["Le départ","En chemin","L'épreuve","La surprise","Le retour"];
 const MAX = 3;
-const S = { name:"Lina", age:1, sub:false, u:"minecraft", adv:0, chars:[0,2], objs:[1,2], meteo:"soleil", amb:"drole", voice:"maman", step:0, page:0, view:"wiz" };
+const S = { name:"Lina", age:1, u:"minecraft", adv:0, chars:[0,2], objs:[1,2], meteo:"soleil", amb:"drole", voice:"maman", step:0, page:0, view:"wiz" };
 try{ Object.assign(S, JSON.parse(localStorage.getItem("atoi")||"{}")); }catch(e){}
 if(!U[S.u]) S.u="minecraft";
 const save = () => { try{ localStorage.setItem("atoi", JSON.stringify(S)); }catch(e){} };
-const R = { on:false, idx:0, tok:0, msg:"", audio:null };
-const P = { ok:false, q:[7,8], who:"Papi", err:"", rec:null, note:"" };
-let FAM = {};
+const R = { on:false, idx:0, tok:0, msg:"" };
 
 const $ = id => document.getElementById(id);
 function h(tag, a, ...kids){ const e=document.createElement(tag); for(const k in (a||{})){ const v=a[k];
-  if(k==="class") e.className=v; else if(k.startsWith("on")) e[k]=v; else if(v===true) e.setAttribute(k,""); else if(v!==false && v!=null) e.setAttribute(k,v); }
+  if(k==="class") e.className=v; else if(k.startsWith("aria-")) e.setAttribute(k,String(v)); else if(k.startsWith("on")) e[k]=v; else if(v===true) e.setAttribute(k,""); else if(v!==false && v!=null) e.setAttribute(k,v); }
   kids.flat().forEach(c=>{ if(c!=null && c!==false) e.append(c); }); return e; }
 const lc = s => s[0].toLowerCase()+s.slice(1);
 const list = a => a.length<2 ? a.join("") : a.slice(0,-1).join(", ")+" et "+a[a.length-1];
 const name = () => (S.name.trim() || "Toi");
-const unlocked = k => S.sub || U[k].free;
 
 function fillFor(u){
   const N=name(), cs=S.chars.map(i=>u.chars[i].n), os=S.objs.map(i=>u.objs[i]);
@@ -787,7 +759,6 @@ function chapters(){
   });
 }
 const wordCount = () => chapters().flat().join(" ").split(/\s+/).filter(t=>/[a-zà-ÿ]/i.test(t)).length;
-const storyKey = () => [S.u,S.adv,name(),S.age,S.chars.join("."),S.objs.join("."),S.meteo,S.amb].join("|");
 
 /* ---- Illustrations dessinées par le code ---- */
 function rnd(seed){ return ()=>{ seed|=0; seed=seed+0x6D2B79F5|0; let t=Math.imul(seed^seed>>>15,1|seed); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
@@ -894,10 +865,8 @@ function pickVoice(p){ const all=frVoices(); if(!all.length) return null;
 function utter(text,p,amb){ const ut=new SpeechSynthesisUtterance(text.replace(/[«»]/g," ")); const v=pickVoice(p); if(v) ut.voice=v;
   ut.lang=v?v.lang:"fr-FR"; ut.pitch=Math.max(.1,p.pitch+(amb?amb.pitch:0)); ut.rate=p.rate*AGES[S.age].rate*(amb?amb.rate:1); return ut; }
 function sayOnce(text){ if(!synth) return; stopReading(); synth.speak(utter(text, VOICES.find(v=>v.k===S.voice)||VOICES[1])); }
-function stopReading(){ R.on=false; R.idx=0; R.tok++; if(synth) synth.cancel(); if(R.audio){ R.audio.pause(); R.audio=null; } }
-const isFam = () => S.voice.startsWith("fam:");
+function stopReading(){ R.on=false; R.idx=0; R.tok++; if(synth) synth.cancel(); }
 function speak(){
-  if(isFam()) return playFam();
   const ps=[...document.querySelectorAll("#text p")];
   if(R.idx>=ps.length){ if(S.page<CHAPTERS.length-1){ S.page++; R.idx=0; render(); return speak(); } stopReading(); render(); return; }
   ps.forEach((p,i)=>p.classList.toggle("now",i===R.idx));
@@ -907,42 +876,10 @@ function speak(){
   ut.onerror=e=>{ if(tok!==R.tok||e.error==="interrupted"||e.error==="canceled") return; R.on=false; R.msg="La lecture vocale est bloquée dans ce navigateur."; render(); };
   synth.speak(ut);
 }
-async function playFam(){
-  const tok=++R.tok; let blob=null;
-  try{ blob=await DB.get(storyKey()+"#"+S.voice.slice(4)+"#"+S.page); }catch(e){}
-  if(tok!==R.tok||!R.on) return;
-  if(!blob){ R.on=false; R.msg="Cet enregistrement est introuvable sur cet appareil."; render(); return; }
-  const a=new Audio(URL.createObjectURL(blob)); R.audio=a;
-  a.onended=()=>{ if(tok!==R.tok||!R.on) return; if(S.page<CHAPTERS.length-1){ S.page++; render(); playFam(); } else { stopReading(); render(); } };
-  a.play().catch(()=>{ R.on=false; R.msg="Lecture impossible sur cet appareil."; render(); });
-}
-
-/* ---- Enregistrements de la famille (stockés sur l'appareil) ---- */
-const DB = {
-  open(){ return this.p || (this.p=new Promise((res,rej)=>{ try{ const q=indexedDB.open("atoi",1); q.onupgradeneeded=()=>q.result.createObjectStore("rec"); q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error); }catch(e){ rej(e); } })); },
-  tx(mode,fn){ return this.open().then(db=>new Promise((res,rej)=>{ const q=fn(db.transaction("rec",mode).objectStore("rec")); q.onsuccess=()=>res(q.result); q.onerror=()=>rej(q.error); })); },
-  put(k,v){ return this.tx("readwrite",s=>s.put(v,k)); }, get(k){ return this.tx("readonly",s=>s.get(k)); },
-  keys(){ return this.tx("readonly",s=>s.getAllKeys()); }, del(k){ return this.tx("readwrite",s=>s.delete(k)); }
-};
-async function refreshFam(){ const m={}; try{ const pre=storyKey()+"#"; (await DB.keys()).filter(k=>String(k).startsWith(pre)).forEach(k=>{ const [who,ch]=k.slice(pre.length).split("#"); (m[who]=m[who]||[]).push(+ch); }); }catch(e){} FAM=m; }
-const famReady = () => Object.keys(FAM).filter(w=>FAM[w].length===CHAPTERS.length);
-async function recStart(ch){
-  P.err="";
-  try{
-    const stream=await navigator.mediaDevices.getUserMedia({audio:true}), mr=new MediaRecorder(stream), chunks=[], key=storyKey()+"#"+P.who+"#"+ch;
-    mr.ondataavailable=e=>{ if(e.data.size) chunks.push(e.data); };
-    mr.onstop=async()=>{ stream.getTracks().forEach(t=>t.stop()); P.rec=null;
-      try{ await DB.put(key,new Blob(chunks,{type:mr.mimeType||"audio/webm"})); }catch(e){ P.err="L'enregistrement n'a pas pu être sauvegardé sur cet appareil."; }
-      await refreshFam(); render(); };
-    mr.start(); P.rec={mr,ch}; render();
-  }catch(e){ P.err="Le micro n'est pas disponible ici. L'enregistrement fonctionne sur le site en ligne, après avoir autorisé le micro."; render(); }
-}
-async function recPlay(ch){ try{ const b=await DB.get(storyKey()+"#"+P.who+"#"+ch); if(b){ if(R.audio) R.audio.pause(); R.audio=new Audio(URL.createObjectURL(b)); R.audio.play().catch(()=>{}); } }catch(e){} }
-async function recDel(ch){ try{ await DB.del(storyKey()+"#"+P.who+"#"+ch); }catch(e){} await refreshFam(); render(); }
-
 /* ---- Écrans ---- */
-const STEPS = ["Choisis ton monde","Où vas-tu ?","Qui vient avec toi ?","Que mets-tu dans ton sac ?","Quel temps fait-il ?","Qui raconte ?"];
-function go(step){ stopReading(); S.step=step; S.view="wiz"; P.note=""; save(); if(step===5) refreshFam().then(render); render(); window.scrollTo(0,0); }
+const AGE_ICON = ["🐣","🦊","🚀"];
+const STEPS = ["Comment t'appelles-tu ?","Choisis ton monde","Où vas-tu ?","Qui vient avec toi ?","Que mets-tu dans ton sac ?","Quel temps fait-il ?","Qui raconte ?"];
+function go(step){ stopReading(); S.step=step; S.view="wiz"; save(); render(); window.scrollTo(0,0); }
 function openBook(){ stopReading(); S.view="book"; S.page=0; R.msg=""; save(); render(); window.scrollTo(0,0); }
 
 function tilesFor(items, sel){
@@ -958,28 +895,28 @@ function head(title, count){ return h("div",{class:"q"}, h("button",{class:"say"
 
 function viewWiz(){
   const u=U[S.u], out=[], st=S.step; let ready=true;
-  out.push(head(STEPS[st], st===2?S.chars.length+" / "+MAX : st===3?S.objs.length+" / "+MAX : null));
-  if(P.note) out.push(h("p",{class:"note"},P.note, h("button",{class:"btn",type:"button",onclick:()=>{ S.view="parent"; render(); }},"Espace parents")));
-  if(st===0) out.push(h("div",{class:"grid big"}, Object.entries(U).map(([k,t])=>{ const cv=canvas(480,270), ok=unlocked(k);
-    scene(cv,k,0,S.meteo,0,null);
-    return h("button",{class:"card u-"+k+(ok?"":" locked"),type:"button","aria-pressed":k===S.u,
-      onclick:()=>{ if(!ok){ P.note="🔒 Ce monde s'ouvre avec l'abonnement. Demande à un adulte !"; render(); return; }
-        if(S.u!==k){ S.u=k; S.adv=0; S.chars=[0,1]; S.objs=[0,1]; } go(1); }}, cv, h("b",null,t.n), ok?null:h("span",{class:"lock","aria-label":"Verrouillé"},"🔒")); })));
-  if(st===1) out.push(h("div",{class:"grid big"}, u.adv.map((a,i)=>{ const cv=canvas(480,270); scene(cv,S.u,i,S.meteo,i===0?0:2,null);
-    return h("button",{class:"card",type:"button","aria-pressed":i===S.adv,onclick:()=>{ S.adv=i; go(2); }}, cv, h("b",null,a.lieu.e+" "+a.lieu.n)); })));
-  if(st===2){ out.push(tilesFor(u.chars,S.chars)); ready=S.chars.length>0; }
-  if(st===3){ out.push(tilesFor(u.objs,S.objs)); ready=S.objs.length>0; }
-  if(st===4){ out.push(pickTiles(METEO,S.meteo,k=>S.meteo=k)); out.push(h("p",{class:"sub"},"Quelle histoire veux-tu ?")); out.push(pickTiles(AMB,S.amb,k=>S.amb=k)); }
-  if(st===5){
-    const fam=famReady(); if(isFam() && !fam.includes(S.voice.slice(4))) S.voice="maman";
-    const ICON={papa:"👨",maman:"👩",mamie:"👵",papi:"👴",enfant:"🧒"};
-    out.push(h("div",{class:"grid med"},
-      VOICES.map(v=>h("button",{class:"tile",type:"button","aria-pressed":S.voice===v.k,onclick:()=>{ S.voice=v.k; save(); render(); sayOnce("Bonjour "+name()+" ! C'est moi qui raconte."); }}, h("span",{class:"em"},ICON[v.k]), h("span",null,v.l))),
-      fam.map(w=>h("button",{class:"tile",type:"button","aria-pressed":S.voice==="fam:"+w,onclick:()=>{ stopReading(); S.voice="fam:"+w; save(); render(); }}, h("span",{class:"em"},"🎙️"), h("span",null,"La vraie voix de "+w)))));
+  out.push(head(STEPS[st], st===3?S.chars.length+" / "+MAX : st===4?S.objs.length+" / "+MAX : null));
+  if(st===0){
+    out.push(h("input",{class:"field big",id:"prenom",type:"text",maxlength:"20",value:S.name,autocomplete:"off",enterkeyhint:"done","aria-label":"Ton prénom",oninput:e=>{ S.name=e.target.value; save(); }}));
+    out.push(h("p",{class:"sub"},"Quel âge as-tu ?"));
+    out.push(h("div",{class:"grid med"}, AGES.map((g,i)=>h("button",{class:"tile",type:"button","aria-pressed":i===S.age,onclick:()=>{ S.age=i; save(); render(); }}, h("span",{class:"em"},AGE_ICON[i]), h("span",null,g.l)))));
   }
+  if(st===1) out.push(h("div",{class:"grid big"}, Object.entries(U).map(([k,t])=>{ const cv=canvas(480,270); scene(cv,k,0,S.meteo,0,null);
+    return h("button",{class:"card u-"+k,type:"button","aria-pressed":k===S.u,
+      onclick:()=>{ if(S.u!==k){ S.u=k; S.adv=0; S.chars=[0,1]; S.objs=[0,1]; } go(2); }}, cv, h("b",null,t.n)); })));
+  if(st===2) out.push(h("div",{class:"grid big"}, u.adv.map((a,i)=>{ const cv=canvas(480,270); scene(cv,S.u,i,S.meteo,i===0?0:2,null);
+    return h("button",{class:"card",type:"button","aria-pressed":i===S.adv,onclick:()=>{ S.adv=i; go(3); }}, cv, h("b",null,a.lieu.e+" "+a.lieu.n)); })));
+  if(st===3){ out.push(tilesFor(u.chars,S.chars)); ready=S.chars.length>0; }
+  if(st===4){ out.push(tilesFor(u.objs,S.objs)); ready=S.objs.length>0; }
+  if(st===5){ out.push(pickTiles(METEO,S.meteo,k=>S.meteo=k)); out.push(h("p",{class:"sub"},"Quelle histoire veux-tu ?")); out.push(pickTiles(AMB,S.amb,k=>S.amb=k)); }
+  if(st===6){
+    const ICON={papa:"👨",maman:"👩",mamie:"👵",papi:"👴",enfant:"🧒"};
+    out.push(h("div",{class:"grid med"}, VOICES.map(v=>h("button",{class:"tile",type:"button","aria-pressed":S.voice===v.k,onclick:()=>{ S.voice=v.k; save(); render(); sayOnce("Bonjour "+name()+" ! C'est moi qui raconte."); }}, h("span",{class:"em"},ICON[v.k]), h("span",null,v.l)))));
+  }
+  const last=st===STEPS.length-1;
   out.push(h("div",{class:"nav"},
     st>0?h("button",{class:"back",type:"button",onclick:()=>go(st-1)},"← Retour"):null,
-    st>=2?h("button",{class:"go",type:"button",disabled:!ready,onclick:()=>st===5?openBook():go(st+1)}, st===5?"▶ Mon histoire !":"Suite →"):null));
+    st===0||st>=3?h("button",{class:"go",type:"button",disabled:!ready,onclick:()=>last?openBook():go(st+1)}, last?"▶ Mon histoire !":"Suite →"):null));
   return out;
 }
 
@@ -987,8 +924,8 @@ function viewBook(){
   const u=U[S.u], adv=u.adv[S.adv], chs=chapters(), cv=canvas(800,450,"illus");
   scene(cv,S.u,S.adv,S.meteo,S.page,{chars:S.chars.map(i=>u.chars[i].e),objs:S.objs.map(i=>u.objs[i].e)});
   cv.setAttribute("aria-label","Illustration du chapitre "+(S.page+1));
-  const last=S.page===CHAPTERS.length-1, canPlay=isFam()||!!synth;
-  const who=isFam()?"la vraie voix de "+S.voice.slice(4):"la voix de "+(VOICES.find(v=>v.k===S.voice)||VOICES[1]).l.toLowerCase();
+  const last=S.page===CHAPTERS.length-1, canPlay=!!synth;
+  const who="la voix de "+(VOICES.find(v=>v.k===S.voice)||VOICES[1]).l.toLowerCase();
   return h("div",{class:"bookv"},
     h("div",{class:"left"}, cv,
       h("div",{class:"ctrl"},
@@ -997,67 +934,31 @@ function viewBook(){
         h("button",{class:"round",type:"button","aria-label":last?"Revenir au début":"Chapitre suivant",onclick:()=>turn(last?0:S.page+1)}, last?"↺":"→")),
       h("div",{class:"dots","aria-hidden":"true"}, CHAPTERS.map((_,i)=>h("i",{class:i===S.page?"on":""}))),
       h("p",{class:"meta"}, R.msg || (!canPlay?"La lecture vocale n'est pas disponible dans ce navigateur.":"Environ "+Math.round(wordCount()/(AGES[S.age].wpm*AMB[S.amb].rate))+" min, avec "+who+".")),
-      h("button",{class:"back",type:"button",onclick:()=>go(0)},"✨ Nouvelle histoire")),
+      h("button",{class:"back",type:"button",onclick:()=>go(1)},"✨ Nouvelle histoire")),
     h("div",{style:"display:flex;flex-direction:column;gap:10px;min-width:0"},
       h("h3",null,adv.titre(name())),
       h("span",{class:"chapter"},"Chapitre "+(S.page+1)+" sur "+CHAPTERS.length+" · "+CHAPTERS[S.page]),
-      h("div",{class:"text a"+S.age,id:"text"}, chs[S.page].map((t,i)=>h("p",{class:R.on&&!isFam()&&i===R.idx?"now":""},t)))));
+      h("div",{class:"text a"+S.age,id:"text"}, chs[S.page].map((t,i)=>h("p",{class:R.on&&i===R.idx?"now":""},t)))));
 }
-function togglePlay(){ if(R.on){ R.on=false; R.tok++; if(synth) synth.cancel(); if(R.audio) R.audio.pause(); render(); } else { R.on=true; R.msg=""; render(); speak(); } }
+function togglePlay(){ if(R.on){ R.on=false; R.tok++; if(synth) synth.cancel(); render(); } else { R.on=true; R.msg=""; render(); speak(); } }
 function turn(p){ const was=R.on; stopReading(); S.page=p; R.on=was; save(); render(); if(was) speak(); }
-
-function viewParent(){
-  if(!P.ok){ const inp=h("input",{class:"field",id:"gate",type:"text",inputmode:"numeric",autocomplete:"off","aria-label":"Réponse"});
-    const check=()=>{ if(+inp.value===P.q[0]*P.q[1]){ P.ok=true; P.err=""; refreshFam().then(render); } else { P.err="Ce n'est pas ça. Essayez encore."; P.q=[6+Math.floor(Math.random()*4),6+Math.floor(Math.random()*4)]; } render(); };
-    return h("div",{class:"parent"}, h("form",{class:"panel",onsubmit:e=>{ e.preventDefault(); check(); }},
-      h("h3",null,"Espace réservé aux adultes"), h("p",null,"Pour entrer, combien font "+P.q[0]+" × "+P.q[1]+" ?"),
-      h("div",{class:"row"}, inp, h("button",{class:"btn",type:"submit"},"Entrer"), h("button",{class:"btn ghost",type:"button",onclick:()=>{ S.view="wiz"; render(); }},"Retour")),
-      P.err?h("p",{class:"muted"},P.err):null)); }
-  const u=U[S.u], chs=chapters(), done=FAM[P.who]||[];
-  const nm=h("input",{class:"field",id:"prenom",type:"text",maxlength:"20",value:S.name,autocomplete:"off","aria-label":"Prénom de l'enfant",oninput:e=>{ S.name=e.target.value; save(); }, onchange:()=>refreshFam().then(render)});
-  return h("div",{class:"parent"},
-    h("div",{class:"row"}, h("h2",{style:"font-family:var(--display);margin:0;margin-right:auto"},"Espace parents"), h("button",{class:"btn",type:"button",onclick:()=>{ P.ok=false; if(P.rec) P.rec.mr.stop(); go(S.step); }},"Retour aux histoires")),
-    h("section",{class:"panel"}, h("h3",null,"L'enfant"),
-      h("div",{class:"row"}, nm, h("div",{class:"seg",role:"group","aria-label":"Âge"}, AGES.map((a,i)=>h("button",{type:"button","aria-pressed":i===S.age,onclick:()=>{ S.age=i; save(); refreshFam().then(render); }},a.l)))),
-      h("p",{class:"muted"},AGES[S.age].hint)),
-    h("section",{class:"panel"}, h("h3",null,"Abonnement"),
-      h("div",{class:"plans"},
-        h("div",{class:"plan"+(S.sub?"":" cur")}, h("b",null,"Découverte"), h("span",{class:"price"},"Gratuit"), h("span",{class:"muted"},"Le monde Minecraft et ses 2 aventures.")),
-        h("div",{class:"plan"+(S.sub?" cur":"")}, h("b",null,"Famille"), h("span",{class:"price"},"4,99 € / mois"), h("span",{class:"muted"},"Les 4 mondes, les 8 aventures et les nouveautés. Prix d'exemple, à fixer."))),
-      h("div",{class:"row"}, h("button",{class:"btn"+(S.sub?" ghost":""),type:"button",onclick:()=>{ S.sub=!S.sub; if(!unlocked(S.u)){ S.u="minecraft"; S.adv=0; S.chars=[0,2]; S.objs=[1,2]; } save(); render(); }}, S.sub?"Revenir à Découverte":"Activer Famille"),
-        h("span",{class:"muted"},"Démonstration : aucun paiement n'est demandé ni enregistré."))),
-    h("section",{class:"panel"}, h("h3",null,"Voix de la famille"),
-      h("p",null,"Enregistrez l'histoire que l'enfant vient de composer. Il pourra ensuite l'écouter avec votre voix, à l'étape « Qui raconte ? »."),
-      h("p",{class:"muted"},"Histoire : "+u.adv[S.adv].titre(name())+" ("+AGES[S.age].l+"). L'enregistrement vaut pour cette version précise et reste sur cet appareil."),
-      h("div",{class:"seg",role:"group","aria-label":"Qui enregistre"}, ["Papa","Maman","Mamie","Papi"].map(w=>h("button",{type:"button","aria-pressed":P.who===w,disabled:!!P.rec,onclick:()=>{ P.who=w; render(); }},w))),
-      P.err?h("p",{class:"note"},P.err):null,
-      h("div",{class:"recs"}, CHAPTERS.map((t,i)=>{ const has=done.includes(i), recHere=P.rec&&P.rec.ch===i;
-        return h("details",{class:"rec",open:recHere||null}, h("summary",null,"Chapitre "+(i+1)+" · "+t+" ", has?h("span",{class:"ok"},"✓ enregistré"):null),
-          h("div",{class:"lines"}, chs[i].map(x=>h("p",null,x))),
-          h("div",{class:"row"},
-            recHere?h("button",{class:"btn",type:"button",onclick:()=>P.rec.mr.stop()},"■ Arrêter")
-                   :h("button",{class:"btn",type:"button",disabled:!!P.rec,onclick:()=>recStart(i)}, has?"● Recommencer":"● Enregistrer"),
-            has?h("button",{class:"btn ghost",type:"button",onclick:()=>recPlay(i)},"▶ Écouter"):null,
-            has?h("button",{class:"btn ghost",type:"button",onclick:()=>recDel(i)},"Supprimer"):null,
-            recHere?h("span",{class:"ok"},"Enregistrement en cours…"):null)); })),
-      h("p",{class:"muted"}, done.length===CHAPTERS.length?"Les 5 chapitres sont enregistrés : la voix de "+P.who+" est proposée à l'enfant.":done.length+" chapitre(s) sur 5 enregistré(s). La voix est proposée à l'enfant quand les 5 sont faits.")));
-}
 
 function render(){
   $("app").className="page u-"+S.u;
   const st=$("steps"); st.textContent="";
   if(S.view==="wiz") STEPS.forEach((_,i)=>st.append(h("i",{class:i<S.step?"done":i===S.step?"on":""})));
-  $("parents").hidden = S.view==="parent";
   const v=$("view"); v.textContent="";
-  v.append(...[].concat(S.view==="book"?viewBook():S.view==="parent"?viewParent():viewWiz()));
+  v.append(...[].concat(S.view==="book"?viewBook():viewWiz()));
 }
-$("parents").onclick=()=>{ stopReading(); S.view="parent"; P.q=[6+Math.floor(Math.random()*4),6+Math.floor(Math.random()*4)]; render(); window.scrollTo(0,0); };
 if(synth && synth.addEventListener) synth.addEventListener("voiceschanged",()=>{});
 window.addEventListener("pagehide",()=>{ if(synth) synth.cancel(); });
-if(!unlocked(S.u)){ S.u="minecraft"; S.adv=0; }
+if(!VOICES.some(v=>v.k===S.voice)) S.voice="maman";
+if(!(S.step>=0 && S.step<STEPS.length)) S.step=0;
 S.view = S.view==="book" ? "book" : "wiz"; R.on=false;
-refreshFam().then(()=>{ if(S.view!=="parent") render(); });
 render();
+</script>
+<script>
+if("serviceWorker" in navigator && location.protocol==="https:") navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
 </html>
