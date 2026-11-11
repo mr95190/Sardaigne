@@ -902,16 +902,61 @@ function utter(text,p,amb){ const ut=new SpeechSynthesisUtterance(text.replace(/
   ut.lang=v?v.lang:"fr-FR"; ut.pitch=Math.max(.1,p.pitch+(amb?amb.pitch:0)); ut.rate=p.rate*AGES[S.age].rate*(amb?amb.rate:1); return ut; }
 function sayOnce(text){ if(!synth) return; stopReading(); synth.speak(utter(text, VOICES.find(v=>v.k===S.voice)||VOICES[1])); }
 function stopReading(){ R.on=false; R.idx=0; R.tok++; if(synth) synth.cancel(); }
+
+/* Une voix par personnage : on repère qui parle dans chaque réplique entre guillemets. */
+const VERB = "(?:dit|demande|répond|crie|chuchote|explique|compte|fait|font|disent|demandent)";
+const RE_INCISE = new RegExp("^(.*?[,!?…])\\s*(" + VERB + "(?:-il|-elle|\\s+[^.!?]{1,45}))([.!?]\\s*)(.*)$", "i");
+const RE_AFTER = new RegExp("^\\s*,?\\s*" + VERB + "\\s+([^.!?]{1,45})", "i");
+function speakerOf(subject){
+  const s=subject.trim().toLowerCase().replace(/^soudain\s+/,""), n=name().toLowerCase(), cs=U[S.u].chars;
+  if(s.startsWith(n)) return "hero";
+  for(const i of S.chars) if(s.startsWith(cs[i].n.toLowerCase())) return "c"+i;
+  return "other";
+}
+function segments(par){
+  const raw=[], re=/«\s*([^»]*?)\s*»/g; let last=0, m;
+  while((m=re.exec(par))){ if(m.index>last) raw.push({t:par.slice(last,m.index),who:"narr"}); raw.push({q:m[1]}); last=re.lastIndex; }
+  if(last<par.length) raw.push({t:par.slice(last),who:"narr"});
+  const out=[];
+  raw.forEach((s,i)=>{
+    if(s.q==null){ out.push(s); return; }
+    const inc=s.q.match(RE_INCISE);
+    if(inc){ const who=/-(il|elle)$/i.test(inc[2])?"other":speakerOf(inc[2].replace(new RegExp("^"+VERB+"\\s+","i"),""));
+      out.push({t:inc[1],who},{t:inc[2]+inc[3],who:"narr"}); if(inc[4]) out.push({t:inc[4],who}); return; }
+    const next=raw[i+1], prev=raw[i-1]; let who="other";
+    const aft=next && next.q==null && next.t.match(RE_AFTER);
+    if(aft) who=speakerOf(aft[1]);
+    else if(prev && prev.q==null){ const sent=prev.t.replace(/[:\s]+$/,"").split(/[.!?…]\s+/).filter(Boolean).pop()||""; const w=speakerOf(sent);
+      if(w!=="other") who=w;
+      else if(/:\s*$/.test(prev.t) && !/\b(cri|appelle|voix)/i.test(sent)) who="narr";   // texte écrit : panneau, mot, étiquette
+      else if(!/\s/.test(s.q) && next && next.q==null && /^\s*[a-zà-ÿ]/.test(next.t)) who="narr"; }   // mot isolé au milieu d'une phrase
+    out.push({t:s.q,who});
+  });
+  return out.filter(s=>/[a-zà-ÿ0-9]/i.test(s.t));
+}
+const clamp=(x,lo,hi)=>Math.max(lo,Math.min(hi,x));
+function voiceFor(who){
+  const base=VOICES.find(v=>v.k===S.voice)||VOICES[1];
+  if(who==="narr") return base;
+  if(who==="hero") return {g:"f",alt:2,pitch:clamp(base.pitch+.24,1.15,1.45),rate:base.rate*1.04};
+  if(who==="other") return {g:base.g,alt:base.alt+1,pitch:base.pitch+.1,rate:base.rate};
+  const ci=+who.slice(1), nm=U[S.u].chars[ci].n, fem=/^La /.test(nm)||/trice$/.test(nm);
+  return {g:fem?"f":"m",alt:ci,pitch:clamp((fem?1.1:.86)+[-.1,.08,-.05,.12,-.13,.06][ci],.7,1.4),rate:base.rate*[.96,1.03,1,1.05,.92,.99][ci]};
+}
 function speak(){
   const ps=[...document.querySelectorAll("#text p")];
   if(R.idx>=ps.length){ if(S.page<CHAPTERS.length-1){ S.page++; R.idx=0; render(); return speak(); } stopReading(); render(); return; }
   ps.forEach((p,i)=>p.classList.toggle("now",i===R.idx));
   ps[R.idx].scrollIntoView({block:"nearest",behavior:"smooth"});
-  const ut=utter(ps[R.idx].textContent, VOICES.find(v=>v.k===S.voice)||VOICES[1], AMB[S.amb]), tok=++R.tok;
-  ut.onend=()=>{ if(tok!==R.tok||!R.on) return; R.idx++; setTimeout(()=>{ if(tok===R.tok&&R.on) speak(); },280); };
-  ut.onerror=e=>{ if(tok!==R.tok||e.error==="interrupted"||e.error==="canceled") return; R.on=false; R.msg="La lecture vocale est bloquée dans ce navigateur."; render(); };
-  synth.speak(ut);
+  const parts=segments(ps[R.idx].textContent), tok=++R.tok;
+  parts.forEach((s,i)=>{
+    const ut=utter(s.t, voiceFor(s.who), AMB[S.amb]);
+    if(i===parts.length-1) ut.onend=()=>{ if(tok!==R.tok||!R.on) return; R.idx++; setTimeout(()=>{ if(tok===R.tok&&R.on) speak(); },280); };
+    ut.onerror=e=>{ if(tok!==R.tok||e.error==="interrupted"||e.error==="canceled") return; R.tok++; R.on=false; synth.cancel(); R.msg="La lecture vocale est bloquée dans ce navigateur."; render(); };
+    synth.speak(ut);
+  });
 }
+
 /* ---- Écrans ---- */
 const AGE_ICON = ["🐣","🦊","🚀"];
 const STEPS = ["Comment t'appelles-tu ?","Choisis ton monde","Où vas-tu ?","Qui vient avec toi ?","Que mets-tu dans ton sac ?","Quel temps fait-il ?","Qui raconte ?"];

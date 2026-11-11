@@ -1,5 +1,5 @@
 // Hors connexion : l'appli est servie depuis le cache, puis mise à jour en arrière-plan.
-const CACHE = "atoi-v4";
+const CACHE = "atoi-v5";
 const SHELL = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", e => {
