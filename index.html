@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Des histoires personnalisées de 5 à 7 minutes dont votre enfant est le héros, à lire ou à écouter.">
+<title>À toi l'histoire</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Nunito:wght@400;600;800&display=swap">
+<style>
+html{-webkit-text-size-adjust:100%}body{margin:0}[hidden]{display:none!important}img{max-width:100%}
+/* Layout : atelier à gauche (4 étapes), livre ouvert collant à droite ; l'univers choisi teinte toute la page. */
+:root{
+  --bg:#EEF3FB; --surface:#FFFFFF; --ink:#1B2340; --muted:#5A6485; --line:#D5DDEE; --on-accent:#FFFFFF;
+  --roblox:#D0352A; --roblox-soft:#FCE3DF;
+  --minecraft:#2A7F39; --minecraft-soft:#DDF2DF;
+  --enquetes:#A85F08; --enquetes-soft:#FBEBD0;
+  --gabby:#B9328F; --gabby-soft:#FBDFF1;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  --r:18px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#12172B; --surface:#1C2340; --ink:#EEF1FA; --muted:#A3ADCB; --line:#343D63; --on-accent:#12172B;
+    --roblox:#FF8274; --roblox-soft:#47231F;
+    --minecraft:#72D47F; --minecraft-soft:#1D3A24;
+    --enquetes:#F2B04C; --enquetes-soft:#40300F;
+    --gabby:#F58AD3; --gabby-soft:#452142;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#12172B; --surface:#1C2340; --ink:#EEF1FA; --muted:#A3ADCB; --line:#343D63; --on-accent:#12172B;
+  --roblox:#FF8274; --roblox-soft:#47231F;
+  --minecraft:#72D47F; --minecraft-soft:#1D3A24;
+  --enquetes:#F2B04C; --enquetes-soft:#40300F;
+  --gabby:#F58AD3; --gabby-soft:#452142;
+  color-scheme:dark;
+}
+.u-roblox{--accent:var(--roblox);--accent-soft:var(--roblox-soft)}
+.u-minecraft{--accent:var(--minecraft);--accent-soft:var(--minecraft-soft)}
+.u-enquetes{--accent:var(--enquetes);--accent-soft:var(--enquetes-soft)}
+.u-gabby{--accent:var(--gabby);--accent-soft:var(--gabby-soft)}
+
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+.page{max-width:1120px;margin:0 auto;padding-block:24px 40px;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));
+  display:flex;flex-direction:column;gap:28px}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+header.top{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 20px}
+.brand{font-family:var(--display);font-weight:800;font-size:2.4rem;line-height:1;margin:0;letter-spacing:-.01em}
+.brand span{color:var(--accent);transition:color .3s}
+.tag{margin:0;color:var(--muted);font-weight:600}
+
+.cols{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:32px;align-items:start}
+.builder{display:flex;flex-direction:column;gap:30px;min-width:0}
+.step{display:flex;flex-direction:column;gap:12px;border:0;padding:0;margin:0;min-width:0}
+.step-head{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.num{font-family:var(--display);font-weight:800;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+  background:var(--ink);color:var(--bg);font-size:1rem;line-height:1;flex:none}
+.step h2{font-family:var(--display);font-weight:800;font-size:1.35rem;margin:0;line-height:1.2}
+.count{margin-left:auto;font-weight:800;color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
+
+.who{display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px;flex:1 1 170px;min-width:0}
+.field label,.lab{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+.field input{background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:10px 14px;font-weight:800;font-size:1.1rem;width:100%}
+.ages{display:flex;flex-direction:column;gap:4px;flex:2 1 260px;min-width:0}
+.seg{display:flex;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:3px;gap:3px}
+.seg button{flex:1;border:0;background:transparent;border-radius:10px;padding:8px 6px;font-weight:800;cursor:pointer;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--accent);color:var(--on-accent)}
+
+.themes{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.theme{text-align:left;border:2px solid var(--line);background:var(--surface);border-radius:var(--r);padding:14px;cursor:pointer;
+  display:flex;gap:12px;align-items:center;min-width:0;transition:transform .15s}
+.theme .em{font-size:2rem;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;background:var(--accent-soft);flex:none}
+.theme b{font-family:var(--display);font-weight:800;font-size:1.1rem;line-height:1.15;display:block}
+.theme small{color:var(--muted);font-weight:600;font-size:.85rem;line-height:1.3;display:block}
+.theme[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft);box-shadow:0 4px 0 var(--accent)}
+.theme:hover{transform:translateY(-2px)}
+
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.tile{border:2px dashed var(--line);background:transparent;border-radius:16px;padding:12px 6px 10px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-weight:800;font-size:.86rem;line-height:1.2;
+  transition:transform .15s}
+.tile .em{font-size:2rem;line-height:1.1}
+.tile[aria-pressed="true"]{border:2px solid var(--accent);background:var(--surface);box-shadow:0 4px 0 var(--accent)}
+.tile[aria-pressed="true"]:nth-child(odd){transform:rotate(-2.5deg)}
+.tile[aria-pressed="true"]:nth-child(even){transform:rotate(2deg)}
+.tile.full{opacity:.45;cursor:not-allowed}
+.hint{margin:0;color:var(--muted);font-size:.88rem;font-weight:600}
+
+/* Le livre */
+.book{position:sticky;top:calc(env(safe-area-inset-top, 0px) + 16px);background:var(--surface);border-radius:8px 22px 22px 8px;
+  border:2px solid var(--line);border-left:12px solid var(--accent);padding:22px 22px 16px;display:flex;flex-direction:column;gap:14px;min-width:0;
+  transition:border-color .3s;max-height:calc(100vh - env(safe-area-inset-top, 0px) - 32px)}
+.book-top{display:flex;flex-direction:column;gap:8px}
+.book h3{font-family:var(--display);font-weight:800;font-size:1.6rem;line-height:1.15;margin:0;text-wrap:balance}
+.cast{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:var(--accent-soft);border-radius:999px;padding:3px 10px;font-size:.82rem;font-weight:800}
+.chapter{font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--accent)}
+.text{display:flex;flex-direction:column;gap:.7em;min-height:10em;overflow-y:auto;flex:1 1 auto;padding-right:4px}
+.text p{margin:0;max-width:62ch}
+.text.a0{font-size:1.3rem;line-height:1.55;font-weight:600}
+.text p{border-radius:8px;transition:background .2s}
+.text p.now{background:var(--accent-soft);box-shadow:0 0 0 6px var(--accent-soft)}
+.player{display:flex;flex-wrap:wrap;gap:10px 12px;align-items:center;background:var(--bg);border-radius:16px;padding:10px 12px}
+.play{border:0;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:800;padding:10px 18px;cursor:pointer;flex:none;min-width:7.5em}
+.play:disabled{opacity:.4;cursor:default}
+.voices{display:flex;flex-wrap:wrap;gap:4px;flex:1 1 220px;min-width:0}
+.voices button{flex:1 1 auto;border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 10px;font-weight:800;font-size:.88rem;cursor:pointer;white-space:nowrap}
+.voices button[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.vnote{flex:1 1 100%;margin:0;font-size:.8rem;color:var(--muted);font-weight:600}
+.text.a1{font-size:1.18rem;line-height:1.6}
+.text.a2{font-size:1.05rem;line-height:1.65}
+.text p:first-child::first-letter{font-family:var(--display);font-weight:800;font-size:2.2em;color:var(--accent);line-height:.9;padding-right:2px}
+.empty{color:var(--muted);font-weight:600;margin:0}
+.nav{display:flex;align-items:center;gap:10px;border-top:2px dashed var(--line);padding-top:12px}
+.nav button{border:0;border-radius:999px;padding:9px 16px;font-weight:800;cursor:pointer;background:var(--accent);color:var(--on-accent)}
+.nav button.ghost{background:transparent;color:var(--ink);border:2px solid var(--line)}
+.nav button:disabled{opacity:.35;cursor:default}
+.dots{display:flex;gap:6px;margin:0 auto}
+.dots i{width:9px;height:9px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--accent)}
+.meta{color:var(--muted);font-size:.85rem;font-weight:600;margin:0}
+
+footer{color:var(--muted);font-size:.82rem;border-top:2px solid var(--line);padding-top:14px}
+footer p{margin:0;max-width:80ch}
+
+@media (max-width:820px){
+  .cols{grid-template-columns:minmax(0,1fr)}
+  .book{position:static;max-height:none}
+  .text{overflow:visible}
+  .brand{font-size:2rem}
+}
+@media (max-width:420px){
+  .themes{grid-template-columns:minmax(0,1fr)}
+  .tiles{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .text{min-height:0}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="page u-minecraft" id="app">
+  <header class="top">
+    <h1 class="brand">À toi <span>l'histoire</span></h1>
+    <p class="tag">Des histoires de 5 à 7 minutes dont votre enfant est le héros, à lire ou à écouter.</p>
+  </header>
+
+  <div class="cols">
+    <div class="builder">
+      <section class="step">
+        <div class="step-head"><span class="num">1</span><h2>Pour qui est l'histoire ?</h2></div>
+        <div class="who">
+          <div class="field">
+            <label for="prenom">Prénom</label>
+            <input id="prenom" type="text" maxlength="20" value="Lina" autocomplete="off">
+          </div>
+          <div class="ages">
+            <span class="lab" id="age-lab">Âge</span>
+            <div class="seg" id="ages" role="group" aria-labelledby="age-lab"></div>
+          </div>
+        </div>
+        <p class="hint" id="age-hint"></p>
+      </section>
+
+      <section class="step">
+        <div class="step-head"><span class="num">2</span><h2>Dans quel univers ?</h2></div>
+        <div class="themes" id="themes"></div>
+      </section>
+
+      <section class="step">
+        <div class="step-head"><span class="num">3</span><h2>Avec quels personnages ?</h2><span class="count" id="c-count"></span></div>
+        <div class="tiles" id="chars"></div>
+      </section>
+
+      <section class="step">
+        <div class="step-head"><span class="num">4</span><h2>Quels objets dans le sac ?</h2><span class="count" id="o-count"></span></div>
+        <div class="tiles" id="objs"></div>
+      </section>
+    </div>
+
+    <article class="book" aria-live="polite">
+      <div class="book-top">
+        <h3 id="title"></h3>
+        <div class="cast" id="cast"></div>
+      </div>
+      <div class="player">
+        <button class="play" id="play" type="button">▶ Écouter</button>
+        <div class="voices" id="voices" role="group" aria-label="Voix du conteur"></div>
+        <p class="vnote" id="vnote"></p>
+      </div>
+      <span class="chapter" id="chapter"></span>
+      <div class="text" id="text"></div>
+      <div class="nav">
+        <button class="ghost" id="prev" type="button">Avant</button>
+        <div class="dots" id="dots" aria-hidden="true"></div>
+        <button id="next" type="button">Suite</button>
+      </div>
+      <p class="meta" id="meta"></p>
+    </article>
+  </div>
+
+  <footer>
+    <p>Maquette visuelle. Les histoires sont assemblées à partir de modèles, avec des personnages originaux. La lecture vocale utilise les voix installées sur l'appareil, réglées pour évoquer chaque conteur. Roblox, Minecraft et Gabby et la maison magique sont des marques de leurs propriétaires respectifs ; ce site n'est pas affilié à eux.</p>
+  </footer>
+</div>
+
+<script>
+const AGES = [
+  {l:"3–5 ans", wpm:100, rate:.86, hint:"Phrases très courtes, gros caractères, lecture lente."},
+  {l:"6–8 ans", wpm:118, rate:.94, hint:"Plus de détails et de suspense, lecture posée."},
+  {l:"9–12 ans", wpm:135, rate:1, hint:"Histoire plus riche, vocabulaire plus varié, rythme naturel."}
+];
+const VOICES = [
+  {k:"papa", l:"Papa", g:"m", alt:0, pitch:.85, rate:1},
+  {k:"maman", l:"Maman", g:"f", alt:0, pitch:1.1, rate:1},
+  {k:"mamie", l:"Mamie", g:"f", alt:1, pitch:.9, rate:.88},
+  {k:"papi", l:"Papi", g:"m", alt:1, pitch:.6, rate:.86},
+  {k:"enfant", l:"Enfant", g:"f", alt:2, pitch:1.7, rate:1.06}
+];
+const C = (e,n)=>({e,n});
+const O = (e,n,un,le)=>({e,n,un,le});
+const U = {
+  roblox:{ e:"🎮", n:"Roblox", s:"Parcours géants et trophées", titre:N=>`${N} et le parcours le plus haut du monde`,
+    chars:[C("🏃","Le Champion d'obby"),C("👷‍♀️","La Bâtisseuse"),C("🙂","Le Débutant au grand cœur"),C("🤖","Le Robot farceur"),C("🥷","Le Ninja du lobby"),C("🏎️","La Pilote de course")],
+    objs:[O("🛹","Planche volante","une planche volante","la planche volante"),O("🗝️","Clé secrète","une clé secrète","la clé secrète"),O("🧪","Potion de vitesse","une potion de vitesse","la potion de vitesse"),O("🪝","Grappin","un grappin","le grappin"),O("🪙","Pièce dorée","une pièce dorée","la pièce dorée"),O("🎈","Ballon géant","un ballon géant","le ballon géant")],
+    pages:[
+     [[0,"{N} arrive dans le grand lobby. C'est ici que tous les jeux commencent."],
+      [0,"Il y a de la musique, des lumières, et des joueurs qui courent partout."],
+      [1,"Certains portent des ailes, d'autres des chapeaux rigolos, et un joueur se promène même avec un poisson sur la tête."],
+      [0,"Au milieu du lobby, {N} retrouve ses amis : {COMP}."],
+      [0,"« Salut {N} ! dit {c1}. Tu as vu l'écran géant ? »"],
+      [0,"{N} lève la tête. Sur l'écran, un message clignote : « Nouveau ! Le parcours le plus haut du monde ! »"],
+      [2,"Juste en dessous, un compteur affiche le nombre de joueurs arrivés au sommet : zéro."],
+      [0,"Le parcours monte jusqu'aux nuages. On ne voit même pas le bout !"],
+      [0,"« Personne n'a encore réussi, dit {c2}. On essaie ? »"],
+      [0,"« Oh oui ! » répond {N}."],
+      [0,"Avant de partir, {N} regarde dans son inventaire. Il y a {OBJS}."],
+      [1,"C'est parfait : avec ça, l'équipe est prête à tout."],
+      [0,"Devant la porte du parcours, tout le monde compte : trois, deux, un… c'est parti !"]],
+     [[0,"Le parcours commence par des plateformes vertes. Elles sont faciles."],
+      [0,"Hop ! Hop ! Hop ! {N} saute de l'une à l'autre."],
+      [0,"Ensuite viennent les plateformes rouges. Attention, elles bougent !"],
+      [0,"Elles vont à gauche, puis à droite, puis à gauche. Il faut sauter au bon moment."],
+      [1,"{N} compte dans sa tête pour trouver le rythme : un, deux, saute. Un, deux, saute."],
+      [0,"« Maintenant ! » crie {c1}. Et {N} saute. Réussi !"],
+      [0,"Puis il y a les plateformes bleues. Celles-là disparaissent quand on marche dessus."],
+      [0,"Il faut courir très vite, sans s'arrêter."],
+      [0,"{N} court, court, court… et arrive de l'autre côté. Ouf !"],
+      [2,"Derrière, les plateformes bleues réapparaissent une à une, comme si de rien n'était."],
+      [0,"Un petit drapeau s'allume. C'est un point de contrôle."],
+      [0,"« Si on tombe, on repart d'ici, explique {c2}. Ce n'est pas grave de tomber. »"],
+      [1,"Tout le monde reprend son souffle et regarde en bas : le lobby est déjà tout petit."],
+      [0,"Et tout le monde continue de monter, de plus en plus haut."]],
+     [[0,"Tout en haut d'une tour, le chemin s'arrête d'un coup. Le pont est cassé !"],
+      [0,"En dessous, il n'y a que des nuages. De l'autre côté, c'est beaucoup trop loin pour sauter."],
+      [0,"{C1} essaie quand même. Un grand saut… et plouf ! Dans les nuages."],
+      [0,"Une seconde plus tard, {c1} réapparaît au point de contrôle en riant."],
+      [1,"« Bon, ce n'était pas la bonne idée ! »"],
+      [0,"{C2} tente sa chance, en prenant beaucoup d'élan. Plouf aussi !"],
+      [0,"{N} réfléchit. Il y a sûrement une solution."],
+      [0,"Mais oui ! {N} ouvre son inventaire et prend {O1}."],
+      [0,"Et ça marche ! Grâce à cette bonne idée, toute l'équipe traverse le grand vide."],
+      [2,"De l'autre côté, les amis se tapent dans la main : le passage le plus difficile du parcours est derrière eux."],
+      [0,"« Quelle bonne idée, {N} ! » dit {c1}."],
+      [0,"Il reste un dernier escalier. Il tourne, il tourne, et il monte jusqu'au ciel."],
+      [1,"Les marches changent de couleur à chaque pas, comme un arc-en-ciel."],
+      [0,"Une marche, deux marches, dix marches, cent marches…"]],
+     [[0,"Et soudain, voilà le sommet !"],
+      [0,"Tout en haut, il y a une grande plateforme dorée. Et sur la plateforme, un trophée brille comme un soleil."],
+      [0,"« On a réussi ! » crie {N}."],
+      [0,"Des confettis tombent du ciel. Une musique de fête se met à jouer."],
+      [1,"Sur l'écran géant, le compteur change enfin : une équipe est arrivée au sommet."],
+      [0,"D'ici, on voit tout : le lobby, les autres jeux, et même la mer tout au fond."],
+      [0,"Mais {N} entend une petite voix. « Au secours ! »"],
+      [0,"Juste en dessous, un petit joueur est bloqué sur une plateforme. Il n'ose plus sauter."],
+      [2,"Il porte encore la tenue grise des tout nouveaux, et ses jambes tremblent un peu."],
+      [0,"« N'aie pas peur, dit {N}. On va t'aider. »"],
+      [0,"{N} prend {O2}, s'approche du bord et tend la main."],
+      [0,"« Saute, je te rattrape ! »"],
+      [0,"Le petit joueur ferme les yeux, saute… et atterrit sur la plateforme dorée."],
+      [1,"« Merci ! dit-il. C'est mon tout premier jour ici. »"],
+      [0,"« Bienvenue dans l'équipe ! » dit {c2}."]],
+     [[0,"Maintenant, il faut redescendre. Et pour descendre, il y a un toboggan géant !"],
+      [0,"Il fait des virages, des boucles et des bosses."],
+      [0,"« Yahouuu ! » crie {N} en glissant."],
+      [0,"Derrière, tout le monde rit aux éclats."],
+      [1,"Le vent siffle, les nuages défilent, et le lobby grossit à toute vitesse."],
+      [0,"En bas, dans le lobby, les autres joueurs applaudissent."],
+      [0,"{N} pose le trophée au milieu, pour que tout le monde puisse le voir."],
+      [0,"« Comment avez-vous fait ? » demandent les joueurs."],
+      [0,"« On a essayé, on est tombés, et on a recommencé, répond {N}. Et surtout, on s'est aidés. »"],
+      [2,"Alors {N} montre le chemin aux autres, saut après saut, et bientôt le compteur du sommet grimpe : deux équipes, trois équipes, dix équipes."],
+      [0,"Le petit joueur a déjà envie de refaire le parcours."],
+      [0,"Mais il se fait tard. {N} range {OL} dans son inventaire."],
+      [0,"« À demain, les amis ! »"],
+      [0,"« À demain, {N} ! »"],
+      [0,"{N} éteint l'écran, bâille et sourit."],
+      [0,"Quelle belle partie ! Et demain, il y aura un nouveau jeu à découvrir."]]
+    ]},
+  minecraft:{ e:"⛏️", n:"Minecraft", s:"Grottes, cubes et trésors", titre:N=>`${N} et le trésor sous la montagne`,
+    chars:[C("🧭","L'Exploratrice"),C("🌾","Le Fermier"),C("🐺","Le Loup apprivoisé"),C("🗿","Le Golem gentil"),C("🐱","Le Chat de la jungle"),C("🧑‍🍳","La Marchande du village")],
+    objs:[O("⛏️","Pioche en diamant","une pioche en diamant","la pioche en diamant"),O("🔥","Torche","une torche","la torche"),O("🗺️","Carte au trésor","une carte au trésor","la carte au trésor"),O("🪣","Seau d'eau","un seau d'eau","le seau d'eau"),O("🍞","Pain chaud","un pain chaud","le pain chaud"),O("🛏️","Lit rouge","un lit rouge","le lit rouge")],
+    pages:[
+     [[0,"Ce matin, {N} se réveille dans un monde tout en cubes."],
+      [0,"Le soleil est carré. Les nuages sont carrés. Même les moutons sont carrés !"],
+      [1,"Par la fenêtre de la cabane, on voit des collines vertes, une rivière bleue et, tout au fond, une grande montagne grise."],
+      [0,"{N} ouvre la porte de sa cabane en bois. Quelqu'un attend déjà dehors : {COMP}."],
+      [0,"« Bonjour {N} ! dit {c1}. J'ai trouvé quelque chose. Viens voir ! »"],
+      [0,"Sur le chemin, il y a un vieux panneau. Dessus, on peut lire : « Trésor caché sous la montagne. »"],
+      [2,"En dessous, quelqu'un a ajouté en petites lettres : « Attention à la nuit. Les monstres n'aiment pas la lumière. »"],
+      [0,"Un trésor ! {N} a le cœur qui bat très fort."],
+      [0,"Vite, il faut préparer le sac. Dedans, {N} glisse {OBJS}."],
+      [1,"On ne sait jamais ce qui peut servir dans une grotte."],
+      [0,"« Tout le monde est prêt ? demande {N}. Alors en route ! »"],
+      [0,"Et la petite troupe part vers la grande montagne."]],
+     [[0,"Le chemin est long. Il monte, il descend, il tourne."],
+      [0,"D'abord, il faut traverser la forêt. Les arbres sont hauts et les feuilles font de l'ombre."],
+      [1,"Un cochon rose traverse le sentier en grognant, puis disparaît derrière un buisson."],
+      [0,"Ensuite, il y a une rivière. L'eau va vite, et il n'y a pas de pont."],
+      [0,"« Comment passer ? » demande {c2}."],
+      [0,"{N} réfléchit. {N} regarde autour. Puis {N} a une idée !"],
+      [0,"Avec des blocs de bois, on peut construire un pont. Un bloc, deux blocs, trois blocs…"],
+      [2,"Chacun en pose un à son tour, bien droit, en faisant attention de ne pas glisser sur les bords mouillés."],
+      [0,"Et voilà ! Le pont est solide. Tout le monde traverse sans se mouiller les pieds."],
+      [1,"De l'autre côté, l'herbe laisse place à des cailloux, puis à de gros rochers."],
+      [0,"Enfin, la montagne est là, juste devant. Elle est immense."],
+      [0,"Dans la roche, il y a un grand trou noir. C'est l'entrée de la grotte."],
+      [0,"« On y va ? » chuchote {N}. « On y va », répond {c1}."]],
+     [[0,"Dans la grotte, il fait très sombre. On n'entend que les pas : tap, tap, tap."],
+      [0,"Soudain, quelque chose grogne dans le noir. Grrr…"],
+      [0,"Tout le monde s'arrête. Personne ne bouge."],
+      [1,"Deux petits yeux brillent au fond du couloir, puis deux autres, puis encore deux."],
+      [0,"« N'ayez pas peur, dit {N}. J'ai ce qu'il faut. »"],
+      [0,"{N} ouvre son sac et sort {O1}."],
+      [0,"Dans le noir, les grognements s'arrêtent, puis s'éloignent. Ouf ! Le passage est libre."],
+      [2,"Les monstres de la grotte ne sont pas bien courageux : dès qu'on leur tient tête, ils filent se cacher."],
+      [0,"Un peu plus loin, un gros mur de pierre bloque le chemin."],
+      [0,"{C2} pousse de toutes ses forces. Le mur ne bouge pas."],
+      [0,"Alors tout le monde s'y met. On pousse, on tape, on creuse. Un caillou tombe, puis un autre."],
+      [1,"La poussière fait éternuer tout le monde, et les éternuements résonnent dans toute la grotte."],
+      [0,"Et crac ! Un trou s'ouvre dans le mur. Il est juste assez grand pour passer."],
+      [0,"« Bravo l'équipe ! » dit {N}."]],
+     [[0,"Derrière le mur, il y a une grande salle. Et dans cette salle, tout brille !"],
+      [0,"Les murs sont pleins de petites pierres vertes, bleues et rouges."],
+      [0,"Au milieu, sur un bloc de pierre, il y a un coffre."],
+      [1,"Il est vieux, couvert de poussière, avec une grosse serrure en fer."],
+      [0,"{N} s'approche tout doucement. {N} soulève le couvercle. Criiic…"],
+      [0,"Le coffre est plein d'émeraudes ! Il y en a des dizaines, toutes vertes et toutes brillantes."],
+      [0,"« Le trésor ! On a trouvé le trésor ! » crie {c1}."],
+      [0,"Tout le monde saute de joie. Hourra !"],
+      [2,"Sous les émeraudes, {N} découvre aussi un petit mot : « Ce trésor est pour ceux qui savent s'entraider. »"],
+      [0,"Mais tout à coup, on entend un petit bruit. Hiii… hiii…"],
+      [0,"Dans un coin, un bébé chauve-souris est coincé sous une pierre."],
+      [0,"{N} prend {O2} pour l'aider, et le bébé s'envole en faisant des pirouettes."],
+      [1,"Il fait trois fois le tour de la salle, comme pour dire merci."],
+      [0,"« Suivons-le, dit {N}. Il connaît sûrement la sortie ! »"]],
+     [[0,"La petite chauve-souris vole devant, et tout le monde la suit."],
+      [0,"Le couloir monte, monte, monte… et voilà la sortie !"],
+      [0,"Dehors, le ciel est devenu orange. Le soleil carré se couche. La nuit arrive."],
+      [0,"« Vite, à la cabane ! » dit {c2}."],
+      [0,"Tout le monde court sur le chemin. On traverse le pont. On traverse la forêt."],
+      [1,"Entre les branches, les premières étoiles carrées s'allument une à une."],
+      [0,"Enfin, la cabane est là. {N} ferme la porte. Clac ! Tout le monde est à l'abri."],
+      [0,"Sur la table, on partage les émeraudes. Une pour toi, une pour moi, une pour toi…"],
+      [2,"{N} en garde une toute petite, la plus brillante, pour la poser sur le rebord de la fenêtre."],
+      [0,"Puis {N} range {OL} dans son sac, pour la prochaine aventure."],
+      [0,"Dehors, la lune carrée monte dans le ciel. Tout est calme."],
+      [0,"{N} se glisse dans son lit et ferme les yeux."],
+      [0,"Quelle belle journée ! Et demain, qui sait ? Il y aura peut-être un autre trésor."],
+      [0,"Bonne nuit, {N}. Bonne nuit, le monde des cubes."]]
+    ]},
+  enquetes:{ e:"🔍", n:"Enquêtes sauvages", s:"Mystères chez les animaux", titre:N=>`${N} et le mystère des noisettes`,
+    chars:[C("🕵️‍♀️","La Détective des bois"),C("🦊","Le Renard pisteur"),C("🦉","La Chouette témoin"),C("🦫","Le Castor ingénieur"),C("🧑‍🌾","Le Garde du parc"),C("🦔","Le Hérisson curieux")],
+    objs:[O("🔎","Loupe","une loupe","la loupe"),O("🔭","Jumelles","des jumelles","les jumelles"),O("📓","Carnet d'indices","un carnet d'indices","le carnet d'indices"),O("📷","Appareil photo","un appareil photo","l'appareil photo"),O("🔦","Lampe de poche","une lampe de poche","la lampe de poche"),O("🐾","Guide des empreintes","un guide des empreintes","le guide des empreintes")],
+    pages:[
+     [[0,"Ce matin, la forêt est toute calme. Les oiseaux chantent et le soleil passe entre les feuilles."],
+      [0,"Mais soudain, on entend un cri : « Mes noisettes ! Mes noisettes ont disparu ! »"],
+      [0,"C'est l'écureuil. Il court dans tous les sens."],
+      [1,"Il avait mis des semaines à remplir sa cachette pour l'hiver, et ce matin, elle est vide."],
+      [0,"{N} arrive tout de suite. {N} adore les mystères."],
+      [0,"« Ne t'inquiète pas, dit {N}. On va les retrouver. »"],
+      [0,"Pour une enquête, il faut une équipe. Aujourd'hui, {N} peut compter sur {COMP}."],
+      [0,"Il faut aussi du matériel. Dans son sac, {N} range {OBJS}."],
+      [2,"Une bonne enquête commence toujours par les mêmes questions : qui, quand, où, et pourquoi ?"],
+      [0,"« Où étaient les noisettes ? » demande {c1}."],
+      [0,"« Dans le trou du vieux chêne », répond l'écureuil."],
+      [0,"Alors l'enquête commence au pied du vieux chêne."],
+      [1,"{N} fait le tour de l'arbre, lentement, les yeux grands ouverts."]],
+     [[0,"Au pied du chêne, la terre est mouillée. Et dans la boue, il y a des traces !"],
+      [0,"{N} se penche pour mieux voir. {N} sort {O1} de son sac."],
+      [0,"Les traces sont petites. Elles ont cinq doigts, comme des petites mains."],
+      [1,"« Ce n'est pas un oiseau, dit {N}. Ce n'est pas un lapin non plus. »"],
+      [0,"« Ce n'est pas moi ! » dit l'écureuil. Lui, il a de toutes petites pattes."],
+      [0,"« Regardez, dit {c2}. Les traces partent par là ! »"],
+      [0,"Tout le monde suit les traces sans faire de bruit. Chut…"],
+      [0,"Un peu plus loin, {N} trouve une coquille de noisette. Puis une autre. Puis encore une autre."],
+      [2,"Elles sont cassées bien proprement, en deux moitiés, et il reste des gouttes d'eau à l'intérieur."],
+      [0,"« Le voleur mange en marchant », dit {N}."],
+      [0,"Les traces passent sous une branche, puis derrière un gros rocher."],
+      [1,"Sur le rocher, il y a une petite touffe de poils gris et noirs. {N} la regarde longtemps."],
+      [0,"Et après le rocher, on entend un bruit d'eau. Glou, glou, glou."],
+      [0,"C'est la rivière !"]],
+     [[0,"Au bord de la rivière, les traces s'arrêtent d'un coup."],
+      [0,"« Oh non, dit {c1}. On a perdu la piste. »"],
+      [0,"{N} regarde à gauche. Rien. {N} regarde à droite. Rien."],
+      [0,"Est-ce que le voleur a traversé l'eau ? Est-ce qu'il sait nager ?"],
+      [1,"Dans une enquête, quand on est perdu, il faut s'arrêter et bien observer."],
+      [0,"{N} s'assoit sur une pierre et réfléchit."],
+      [0,"Soudain, une petite goutte tombe sur son nez. Ploc !"],
+      [0,"{N} lève la tête. Dans l'arbre, juste au-dessus, une branche est toute mouillée."],
+      [0,"« Le voleur n'a pas traversé, dit {N}. Il a grimpé ! »"],
+      [2,"Sur l'écorce, on distingue de fines griffures toutes fraîches, qui montent en ligne droite vers les branches."],
+      [0,"{N} prend {O2} et regarde vers le haut."],
+      [0,"Là-haut, il y a un trou dans le tronc. Et dans le trou, quelque chose bouge."],
+      [1,"On aperçoit le bout d'une queue rayée, grise et noire, qui dépasse un tout petit peu."],
+      [0,"Crac, crac, crac. On dirait quelqu'un qui croque."],
+      [0,"« Je crois qu'on a trouvé notre voleur », chuchote {c2}."]],
+     [[0,"« Bonjour ! dit {N} tout doucement. Il y a quelqu'un ? »"],
+      [0,"Le bruit s'arrête. Deux petits yeux noirs apparaissent dans le trou."],
+      [0,"Puis un petit museau. Puis deux petites mains."],
+      [0,"C'est un bébé raton laveur ! Autour de ses yeux, il a comme un masque noir."],
+      [1,"Il tient encore une noisette, qu'il était en train de laver dans une flaque, comme le font tous les ratons laveurs."],
+      [0,"« C'est toi qui as pris les noisettes ? » demande {N}."],
+      [0,"Le bébé baisse la tête. « Oui… J'avais très faim. Et je suis tout seul. »"],
+      [0,"« Tout seul ? Où est ta maman ? »"],
+      [0,"« Je ne sais pas. Je me suis perdu cette nuit. »"],
+      [2,"Il raconte qu'il a suivi un papillon de nuit, puis une luciole, et qu'au matin il ne reconnaissait plus rien."],
+      [0,"L'écureuil n'est plus fâché du tout. Il a même un peu envie de pleurer."],
+      [0,"« Tu aurais pu me demander, dit-il. Je t'en aurais donné. »"],
+      [0,"« Pardon », dit le bébé raton laveur."],
+      [1,"Et il rend les noisettes qui restent, bien rangées en petit tas."],
+      [0,"« L'enquête n'est pas finie, dit {N}. Maintenant, il faut retrouver ta maman ! »"],
+      [0,"« On t'aide », dit {c1}."]],
+     [[0,"Les ratons laveurs aiment l'eau. Alors toute l'équipe suit la rivière."],
+      [0,"Le bébé marche tout près, sans lâcher {N} des yeux. Il n'a plus peur."],
+      [0,"On passe un petit pont, puis un grand saule."],
+      [1,"{C2} ouvre la marche et regarde bien le sol, au cas où il y aurait de nouvelles traces."],
+      [0,"Et là, dans la boue, il y a des traces à cinq doigts. Mais celles-ci sont plus grandes !"],
+      [0,"« Ce sont les traces d'une maman », dit {N}."],
+      [0,"Tout le monde appelle : « Maman raton ! Maman raton ! »"],
+      [0,"Derrière un buisson, quelque chose remue. Une maman raton laveur sort en courant."],
+      [0,"« Mon bébé ! » Elle le serre très fort contre elle."],
+      [2,"Elle l'avait cherché toute la nuit, de la rivière jusqu'à la colline, sans jamais s'arrêter."],
+      [0,"« Merci, dit la maman. Merci à tous. »"],
+      [0,"Pour dire pardon, les ratons laveurs aident l'écureuil à ramasser plein de nouvelles noisettes."],
+      [1,"Avant la fin de la journée, la cachette du vieux chêne est encore plus remplie qu'avant."],
+      [0,"Le soir, {N} range {OL} dans son sac."],
+      [0,"Le mystère des noisettes est résolu. Il n'y avait pas de méchant, seulement un petit ventre vide."],
+      [0,"Bonne nuit, la forêt. Et à demain, pour une nouvelle enquête !"]]
+    ]},
+  gabby:{ e:"🐱", n:"Gabby et la maison magique", s:"Chatons, surprises et paillettes", titre:N=>`${N} et la musique envolée`,
+    chars:[C("🧁","Le Chaton pâtissier"),C("🧜‍♀️","La Chatte sirène"),C("🧰","Le Chat bricoleur"),C("🧚","La Fée chaton"),C("🎧","Le Chat musicien"),C("😴","Le Chat qui fait la sieste")],
+    objs:[O("🎀","Serre-tête à oreilles","un serre-tête à oreilles de chat","le serre-tête à oreilles de chat"),O("✨","Sachet de paillettes","un sachet de paillettes","le sachet de paillettes"),O("🪄","Baguette arc-en-ciel","une baguette arc-en-ciel","la baguette arc-en-ciel"),O("🛋️","Coussin volant","un coussin volant","le coussin volant"),O("🫧","Flacon à bulles","un flacon à bulles","le flacon à bulles"),O("🔔","Grelot doré","un grelot doré","le grelot doré")],
+    pages:[
+     [[0,"Ding ! Ding ! Quelqu'un sonne à la porte."],
+      [0,"C'est une petite boîte surprise ! Elle est rose, avec des oreilles de chat et un gros ruban."],
+      [0,"{N} adore les boîtes surprises. Qu'est-ce qu'il peut bien y avoir dedans ?"],
+      [0,"{N} défait le ruban, soulève le couvercle… et découvre {OBJS}."],
+      [1,"Tout au fond, il y a aussi une petite carte avec un dessin de note de musique."],
+      [0,"Dans la chambre, il y a une grande maison de poupée. C'est la maison magique."],
+      [2,"Il y a aussi un jardin où poussent des fleurs géantes, un atelier plein de boutons et de rubans, et une chambre où les oreillers racontent des histoires."],
+      [0,"D'habitude, la maison chante toute la journée. Mais aujourd'hui… plus rien. Pas un bruit."],
+      [0,"« C'est bizarre, dit {N}. Où est passée la musique ? »"],
+      [0,"Il n'y a qu'un moyen de le savoir : il faut entrer dans la maison."],
+      [1,"{N} serre bien fort son trésor de la boîte surprise et prend une grande inspiration."],
+      [0,"{N} ferme les yeux, compte jusqu'à trois… un, deux, trois !"],
+      [0,"Et pouf ! {N} rapetisse, rapetisse, rapetisse, jusqu'à avoir la taille d'un chaton."]],
+     [[0,"{N} atterrit dans l'entrée de la maison magique. Tout est grand maintenant !"],
+      [0,"« Bienvenue, {N} ! »"],
+      [0,"Les amis de la maison sont là pour l'accueil : {COMP}."],
+      [0,"Mais tout le monde a l'air triste."],
+      [0,"« La musique est partie, explique {c1}. Ce matin, les notes se sont envolées de la salle de musique. »"],
+      [1,"« Elles ont filé par la fenêtre, par la cheminée et même par le trou de la serrure ! »"],
+      [0,"« Sans musique, on ne peut pas danser, dit {c2}. Et ce soir, c'est la grande fête de la maison. »"],
+      [0,"« Alors on va les retrouver, dit {N}. Toutes ! »"],
+      [0,"Il y a sept notes à chercher : do, ré, mi, fa, sol, la, si."],
+      [2,"Chacune a sa couleur, comme les sept couleurs de l'arc-en-ciel, et chacune a son petit caractère."],
+      [0,"La première n'est pas loin. Elle fait des bonds sur le tapis de l'entrée. Do ! Do ! Do !"],
+      [0,"{N} ouvre les bras et hop ! La note saute dedans."],
+      [1,"Elle est toute chaude et elle chatouille un peu."],
+      [0,"« Une ! » compte {N}. Il en reste six."]],
+     [[0,"Dans la cuisine, ça sent bon le gâteau. Et qui se cache dans le pot de farine ? La note ré !"],
+      [0,"La note mi nage dans la baignoire, au milieu des bulles."],
+      [0,"{N} sort {O1} et l'attrape en douceur. Plouf ! Et de trois."],
+      [0,"Dans le jardin, la note fa se balance sur une fleur. La note sol joue à cache-cache derrière un champignon."],
+      [0,"« Trouvée ! » dit {c1}."],
+      [0,"« Trouvée aussi ! » dit {c2}."],
+      [0,"Cinq notes ! Il en manque deux."],
+      [0,"Tout en haut de l'escalier, la note « la » glisse sur la rampe en riant."],
+      [2,"Elle va si vite qu'il faut s'y reprendre à trois fois avant de la voir ralentir, tout essoufflée, au bas des marches."],
+      [0,"{N} l'attend en bas et l'attrape au vol. Six !"],
+      [0,"Mais la dernière, la petite note si, n'est nulle part."],
+      [0,"On cherche sous le lit. On cherche dans le placard. On cherche derrière les rideaux."],
+      [1,"On regarde même dans les chaussons et sous le paillasson."],
+      [0,"Rien du tout."]],
+     [[0,"« Écoutez », dit soudain {N}."],
+      [0,"Tout le monde se tait. Et là, on entend un tout petit bruit. Si… si… si…"],
+      [0,"Ça vient d'en haut. Ça vient du grenier !"],
+      [0,"L'escalier du grenier est tout noir. Les marches font cric et crac."],
+      [1,"Personne n'est très à l'aise, mais personne ne veut laisser la petite note toute seule."],
+      [0,"« Je passe devant », dit {N}. Et tout le monde suit."],
+      [0,"Dans le grenier, il y a de vieilles malles, des chapeaux et un grand coussin violet."],
+      [0,"Et sous le coussin, quelque chose tremble."],
+      [0,"C'est la petite note si. Elle est toute petite et elle se cache."],
+      [0,"« Pourquoi tu te caches ? » demande {N} gentiment."],
+      [0,"« Parce que je suis la dernière, dit la note. Personne ne m'attend jamais. »"],
+      [2,"« Les autres notes sont plus fortes et plus rapides que moi. Moi, j'arrive toujours à la fin de la chanson. »"],
+      [0,"« Mais si, on t'attend ! dit {N}. Sans toi, la chanson n'est pas finie. On a besoin de toi. »"],
+      [0,"La petite note sort un œil. Puis l'autre."],
+      [0,"Pour la rassurer, {N} lui montre {O2}."],
+      [1,"La petite note ouvre de grands yeux ronds : elle n'avait jamais rien vu d'aussi joli."],
+      [0,"Alors la note sourit, et elle saute dans ses bras. Sept !"]],
+     [[0,"Vite, tout le monde redescend dans la salle de musique."],
+      [0,"{N} pose les sept notes sur le grand piano. Do, ré, mi, fa, sol, la, si."],
+      [0,"Elles se mettent en rang, de la plus grave à la plus aiguë."],
+      [0,"Et la musique repart ! Elle remplit toute la maison."],
+      [1,"Elle passe sous les portes, monte l'escalier et fait vibrer les vitres."],
+      [0,"« C'est l'heure de la fête ! » crie {c1}."],
+      [0,"Tout le monde danse. On tourne, on saute, on tape dans les mains."],
+      [0,"Et la petite note si chante plus fort que toutes les autres."],
+      [2,"Ce soir, c'est même elle qui termine la chanson, toute seule, et toute la maison l'applaudit."],
+      [0,"Puis il y a un goûter, avec des gâteaux en forme de chat."],
+      [1,"{C2} en a gardé un spécialement pour {N}, avec des moustaches en chocolat."],
+      [0,"{N} fait un gros câlin à ses amis."],
+      [0,"« Merci, {N} ! Reviens vite ! »"],
+      [0,"{N} range {OL} dans la boîte surprise, ferme les yeux et compte : un, deux, trois…"],
+      [0,"Pouf ! Retour dans la chambre."],
+      [0,"À bientôt, maison magique !"]]
+    ]}
+};
+const CHAPTERS = ["Le départ","En chemin","L'épreuve","La surprise","Le retour"];
+const MAX = 3;
+const S = { age:1, u:"minecraft", chars:[0,2], objs:[1,2], page:0, voice:"maman" };
+const R = { on:false, idx:0, tok:0, msg:"" };
+
+const $ = id => document.getElementById(id);
+const el = (tag, cls, txt) => { const x=document.createElement(tag); if(cls) x.className=cls; if(txt!=null) x.textContent=txt; return x; };
+const lc = s => s[0].toLowerCase()+s.slice(1);
+const list = a => a.length<2 ? a.join("") : a.slice(0,-1).join(", ")+" et "+a[a.length-1];
+const name = () => ($("prenom").value.trim() || "Toi");
+
+function tiles(host, items, sel){
+  host.textContent="";
+  items.forEach((it,i)=>{
+    const on = sel.includes(i), b = el("button","tile"+(!on && sel.length>=MAX ? " full":""));
+    b.type="button"; b.setAttribute("aria-pressed",on);
+    b.append(el("span","em",it.e), el("span",null,it.n));
+    b.onclick=()=>{ const k=sel.indexOf(i); if(k>=0) sel.splice(k,1); else if(sel.length<MAX) sel.push(i); else return; S.page=0; change(); };
+    host.append(b);
+  });
+}
+
+function fillFor(u){
+  const N=name(), cs=S.chars.map(i=>u.chars[i].n), os=S.objs.map(i=>u.objs[i]);
+  const c2=cs[1]||cs[0], o2=(os[1]||os[0]).le;
+  return s => s.replaceAll("{COMP}",list(cs.map(lc))).replaceAll("{C1}",cs[0]).replaceAll("{C2}",c2)
+    .replaceAll("{c1}",lc(cs[0])).replaceAll("{c2}",lc(c2)).replaceAll("{OBJS}",list(os.map(o=>o.un)))
+    .replaceAll("{O1}",os[0].le).replaceAll("{O2}",o2).replaceAll("{OL}",os[os.length-1].le).replaceAll("{N}",N);
+}
+
+function render(){
+  const u = U[S.u], N = name();
+  $("app").className = "page u-"+S.u;
+
+  $("ages").textContent="";
+  AGES.forEach((a,i)=>{ const b=el("button",null,a.l); b.type="button"; b.setAttribute("aria-pressed",i===S.age);
+    b.onclick=()=>{S.age=i;S.page=0;change();}; $("ages").append(b); });
+  $("age-hint").textContent = AGES[S.age].hint;
+
+  $("themes").textContent="";
+  Object.entries(U).forEach(([k,t])=>{
+    const b=el("button","theme u-"+k); b.type="button"; b.setAttribute("aria-pressed",k===S.u);
+    const d=el("span"); d.append(el("b",null,t.n), el("small",null,t.s));
+    b.append(el("span","em",t.e), d);
+    b.onclick=()=>{ if(S.u!==k){ S.u=k; S.chars=[0,1]; S.objs=[0,1]; S.page=0; change(); } };
+    $("themes").append(b);
+  });
+
+  tiles($("chars"), u.chars, S.chars);
+  tiles($("objs"), u.objs, S.objs);
+  $("c-count").textContent = S.chars.length+" / "+MAX;
+  $("o-count").textContent = S.objs.length+" / "+MAX;
+
+  // Le livre
+  $("title").textContent = u.titre(N);
+  const cast=$("cast"); cast.textContent="";
+  cast.append(el("span","chip",AGES[S.age].l));
+  S.chars.forEach(i=>cast.append(el("span","chip",u.chars[i].e+" "+u.chars[i].n)));
+  S.objs.forEach(i=>cast.append(el("span","chip",u.objs[i].e+" "+u.objs[i].n)));
+
+  const text=$("text"); text.textContent=""; text.className="text a"+S.age;
+  const ready = S.chars.length && S.objs.length;
+  if(!ready){
+    $("chapter").textContent="";
+    text.append(el("p","empty", !S.chars.length ? "Choisis au moins un personnage pour accompagner "+N+"." : "Glisse au moins un objet dans le sac."));
+  } else {
+    const fill = fillFor(u);
+    $("chapter").textContent = "Chapitre "+(S.page+1)+" sur "+CHAPTERS.length+" · "+CHAPTERS[S.page];
+    u.pages[S.page].filter(([lvl])=>lvl<=S.age).forEach(([,s],i)=>{
+      const p=el("p",null,fill(s)); if(R.on && i===R.idx) p.classList.add("now"); text.append(p); });
+  }
+  const dots=$("dots"); dots.textContent="";
+  CHAPTERS.forEach((_,i)=>dots.append(el("i", i===S.page&&ready?"on":"")));
+  $("prev").disabled = !ready || S.page===0;
+  $("next").disabled = !ready;
+  $("next").textContent = S.page===CHAPTERS.length-1 ? "Relire" : "Suite";
+  const words = ready ? u.pages.flat().filter(([l])=>l<=S.age).map(x=>x[1]).join(" ").split(/\s+/).filter(t=>/[a-zà-ÿ{]/i.test(t)).length : 0;
+  $("meta").textContent = ready ? CHAPTERS.length+" chapitres · environ "+Math.round(words/AGES[S.age].wpm)+" min d'écoute" : "";
+
+  // Lecteur vocal
+  const vs=$("voices"); vs.textContent="";
+  VOICES.forEach(v=>{ const b=el("button",null,v.l); b.type="button"; b.setAttribute("aria-pressed",v.k===S.voice);
+    b.onclick=()=>{ S.voice=v.k; if(R.on){ R.tok++; synth.cancel(); render(); speak(); } else render(); }; vs.append(b); });
+  $("play").textContent = R.on ? "❚❚ Pause" : (R.idx ? "▶ Reprendre" : "▶ Écouter");
+  $("play").disabled = !ready || !synth;
+  $("vnote").textContent = !synth ? "La lecture vocale n'est pas disponible dans ce navigateur."
+    : R.msg ? R.msg
+    : !frVoices().length ? "Aucune voix française trouvée sur cet appareil : la lecture utilisera la voix par défaut."
+    : "Voix de " + VOICES.find(v=>v.k===S.voice).l.toLowerCase() + " : " + (pickVoice(VOICES.find(v=>v.k===S.voice))?.name || "voix par défaut") + ".";
+}
+
+/* ---- Lecture vocale ---- */
+const synth = window.speechSynthesis || null;
+const MALE = /thomas|paul|henri|claude|daniel|nicolas|jacques|antoine|mathieu|guillaume|male\b|homme|masculin/i;
+const FEMALE = /am[ée]lie|marie|audrey|julie|hortense|denise|[ée]lo[iï]se|c[ée]line|aur[ée]lie|virginie|sylvie|l[ée]a|female|femme|f[ée]minin/i;
+function frVoices(){ try{ return synth ? synth.getVoices().filter(v=>/^fr/i.test(v.lang)) : []; }catch(e){ return []; } }
+function pickVoice(p){
+  const all=frVoices(); if(!all.length) return null;
+  const m=all.filter(v=>MALE.test(v.name) && !FEMALE.test(v.name)), f=all.filter(v=>FEMALE.test(v.name));
+  const pool = (p.g==="m" ? m : f); const use = pool.length ? pool : all;
+  return use[p.alt % use.length];
+}
+function stopReading(){ R.on=false; R.idx=0; R.tok++; if(synth) synth.cancel(); }
+function change(){ stopReading(); R.msg=""; render(); }
+function speak(){
+  const ps=[...$("text").querySelectorAll("p:not(.empty)")];
+  if(!ps.length){ stopReading(); render(); return; }
+  if(R.idx>=ps.length){
+    if(S.page<CHAPTERS.length-1){ S.page++; R.idx=0; render(); return speak(); }
+    stopReading(); render(); return;
+  }
+  ps.forEach((p,i)=>p.classList.toggle("now",i===R.idx));
+  ps[R.idx].scrollIntoView({block:"nearest",behavior:"smooth"});
+  const p=VOICES.find(v=>v.k===S.voice), ut=new SpeechSynthesisUtterance(ps[R.idx].textContent.replace(/[«»]/g," "));
+  const v=pickVoice(p); if(v) ut.voice=v;
+  ut.lang = v ? v.lang : "fr-FR"; ut.pitch=p.pitch; ut.rate=p.rate*AGES[S.age].rate;
+  const tok=++R.tok;
+  ut.onend=()=>{ if(tok!==R.tok || !R.on) return; R.idx++; speak(); };
+  ut.onerror=e=>{ if(tok!==R.tok || e.error==="interrupted" || e.error==="canceled") return;
+    R.on=false; R.msg="La lecture vocale a été bloquée par ce navigateur. Essayez d'ouvrir la page dans un autre navigateur."; render(); };
+  synth.speak(ut);
+}
+$("play").onclick=()=>{
+  if(!synth) return;
+  if(R.on){ R.on=false; R.tok++; synth.cancel(); render(); }
+  else { R.on=true; R.msg=""; render(); speak(); }
+};
+if(synth && synth.addEventListener) synth.addEventListener("voiceschanged", ()=>{ if(!R.on) render(); });
+window.addEventListener("pagehide", ()=>{ if(synth) synth.cancel(); });
+
+function turn(p){ S.page=p; R.idx=0; if(R.on){ R.tok++; synth.cancel(); render(); speak(); } else render(); }
+$("prenom").addEventListener("input", change);
+$("prev").onclick=()=>turn(Math.max(0,S.page-1));
+$("next").onclick=()=>turn(S.page===CHAPTERS.length-1 ? 0 : S.page+1);
+render();
+
+</script>
+</body>
+</html>
