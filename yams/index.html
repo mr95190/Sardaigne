@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Yams entre amis</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#174A3A">
+<meta name="description" content="Jouez au Yams à plusieurs sur un seul téléphone : jusqu'à 4 joueurs, feuille de marque automatique.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Figtree:wght@400;600;800&display=swap">
+<style>
+/* Layout : une seule vue de jeu. La feuille de marque (tous les joueurs côte à côte) défile en haut,
+   la piste de dés en feutre reste ancrée en bas, à portée de pouce. */
+:root{
+  --paper:#F2F4EF; --sheet:#FFFFFF; --ink:#16231D; --muted:#5D6B64; --rule:#D9E0DA;
+  --felt:#1D5A46; --felt-deep:#133D30; --felt-ink:#E9F3EE;
+  --die:#FBFAF6; --pip:#1A1F1C; --hold:#F0B43C; --hold-ink:#2B1E05;
+  --p1:#D2453A; --p2:#2C68CF; --p3:#B7820B; --p4:#8A4CC6;
+  --p1s:#FBE3E0; --p2s:#E0EAFA; --p3s:#F8EDD0; --p4s:#EEE2F8;
+  --good:#1F7A4D;
+  --display:"Archivo Black","Arial Black",system-ui,sans-serif;
+  --body:"Figtree","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0F1513; --sheet:#18201D; --ink:#E7EEEA; --muted:#97A59E; --rule:#2B3631;
+    --felt:#174A3A; --felt-deep:#0C2A21; --felt-ink:#E2F0E9;
+    --die:#F1EFE8; --pip:#151917; --hold:#F3BE55; --hold-ink:#2B1E05;
+    --p1:#FF7A6E; --p2:#7AA6FF; --p3:#E8B740; --p4:#C394F2;
+    --p1s:#3A1C19; --p2s:#18264A; --p3s:#352A0C; --p4s:#2C1E3D;
+    --good:#5CCB8F;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0F1513; --sheet:#18201D; --ink:#E7EEEA; --muted:#97A59E; --rule:#2B3631;
+  --felt:#174A3A; --felt-deep:#0C2A21; --felt-ink:#E2F0E9;
+  --die:#F1EFE8; --pip:#151917; --hold:#F3BE55; --hold-ink:#2B1E05;
+  --p1:#FF7A6E; --p2:#7AA6FF; --p3:#E8B740; --p4:#C394F2;
+  --p1s:#3A1C19; --p2s:#18264A; --p3s:#352A0C; --p4s:#2C1E3D;
+  --good:#5CCB8F;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.4 var(--body);-webkit-tap-highlight-color:transparent;overscroll-behavior:none}
+[hidden]{display:none!important}
+button{font:inherit;color:inherit;cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible{outline:3px solid var(--hold);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+
+/* ---------- Écran d'accueil ---------- */
+#setup{min-height:100%;display:flex;flex-direction:column;gap:22px;padding-block:28px 32px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));max-width:520px;margin:0 auto}
+.brand{display:flex;align-items:center;gap:14px}
+.brand h1{font:44px/1 var(--display);margin:0;letter-spacing:-.01em}
+.brand p{margin:4px 0 0;color:var(--muted)}
+.brand-dice{display:flex;gap:6px}
+.brand-dice .die{--s:34px}
+.label{font-size:12px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.seg button{border:2px solid var(--rule);background:var(--sheet);border-radius:14px;padding:12px 0;font:22px/1 var(--display)}
+.seg button[aria-pressed="true"]{background:var(--felt);border-color:var(--felt);color:var(--felt-ink)}
+.names{display:grid;gap:10px}
+.name-row{display:flex;align-items:center;gap:10px;background:var(--sheet);border:2px solid var(--rule);border-radius:14px;padding:4px 6px 4px 14px}
+.name-row .dot{width:14px;height:14px;border-radius:50%;flex:none}
+.name-row input{flex:1;min-width:0;border:0;background:transparent;font:600 18px var(--body);color:var(--ink);padding:10px 4px}
+.name-row input:focus{outline:none}
+.name-row:focus-within{border-color:var(--ink)}
+.btn{border:0;border-radius:16px;padding:16px 18px;font-weight:800;font-size:18px}
+.btn-main{background:var(--felt);color:var(--felt-ink)}
+.btn-ghost{background:transparent;border:2px solid var(--rule)}
+.resume{background:var(--sheet);border:2px solid var(--felt);border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;text-align:left;width:100%}
+.resume b{display:block;font-size:17px}
+.resume span{color:var(--muted);font-size:14px}
+.resume .go{margin-left:auto;font:20px var(--display);color:var(--felt)}
+.foot-note{color:var(--muted);font-size:14px;margin:0}
+
+/* ---------- Jeu ---------- */
+#game{height:100%;display:flex;flex-direction:column}
+.topbar{display:flex;align-items:center;gap:10px;padding-block:10px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));border-bottom:1px solid var(--rule);background:var(--paper)}
+.turn-who{display:flex;align-items:center;gap:8px;min-width:0}
+.turn-who .dot{width:12px;height:12px;border-radius:50%;flex:none}
+.turn-who b{font:20px/1.1 var(--display);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.round{color:var(--muted);font-size:14px;margin-left:auto;white-space:nowrap}
+.icon-btn{border:2px solid var(--rule);background:var(--sheet);border-radius:12px;padding:6px 12px;font-weight:800;font-size:14px}
+
+.sheet-wrap{flex:1;overflow:auto;-webkit-overflow-scrolling:touch;padding-block:0 12px;
+  padding-left:max(10px,env(safe-area-inset-left,0px));padding-right:max(10px,env(safe-area-inset-right,0px))}
+table{width:100%;border-collapse:separate;border-spacing:0;table-layout:fixed}
+th,td{padding:0;text-align:center}
+thead th{position:sticky;top:0;background:var(--paper);z-index:2;padding:10px 2px 6px;font-size:13px;font-weight:800;vertical-align:bottom}
+thead th .pn{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding-bottom:4px;border-bottom:3px solid var(--pc)}
+thead th.cur .pn{color:var(--pc)}
+col.c-label{width:auto}
+td.cat{text-align:left;padding:0 6px 0 4px;height:40px;border-bottom:1px solid var(--rule)}
+td.cat b{display:block;font-size:15px;font-weight:800;line-height:1.1}
+td.cat small{display:block;font-size:11px;color:var(--muted);line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+td.v{border-bottom:1px solid var(--rule);font-weight:800;font-size:17px;height:40px}
+td.v.cur{background:var(--pcs)}
+td.v .crossed{color:var(--muted);font-weight:600}
+.pick{width:100%;height:100%;min-height:40px;border:0;background:transparent;font-size:17px;font-weight:600;color:var(--muted);font-style:italic}
+.pick.zero{opacity:.55}
+.pick.hot{color:var(--pc);font-style:normal;font-weight:800}
+.pick[aria-pressed="true"]{background:var(--pc);color:var(--sheet);font-style:normal;font-weight:800;border-radius:8px}
+tr.sum td{background:var(--sheet);height:34px;border-bottom:1px solid var(--rule)}
+tr.sum td.cat b{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+tr.sum td.v{font-size:15px}
+tr.sum td.v.cur{background:var(--pcs)}
+tr.sum .need{font-size:12px;color:var(--muted);font-weight:600}
+tr.sum .ok{color:var(--good)}
+tr.total td{height:46px;border-bottom:0;background:var(--sheet);border-top:2px solid var(--ink)}
+tr.total td.v{font:20px var(--display)}
+tr.total td.cat b{color:var(--ink)}
+tr.gap td{height:10px;border:0}
+
+/* Piste de dés */
+.tray{background:var(--felt);color:var(--felt-ink);border-radius:22px 22px 0 0;
+  padding-block:14px calc(14px + env(safe-area-inset-bottom,0px));
+  padding-left:max(14px,env(safe-area-inset-left,0px));padding-right:max(14px,env(safe-area-inset-right,0px));
+  box-shadow:inset 0 2px 0 rgba(255,255,255,.06),0 -6px 18px rgba(0,0,0,.12);display:grid;gap:12px}
+.tray-msg{text-align:center;font-size:14px;min-height:20px;opacity:.9}
+.tray-msg b{color:var(--hold)}
+.dice{display:flex;justify-content:center;gap:clamp(8px,3vw,16px)}
+.die{--s:clamp(48px,15vw,64px);width:var(--s);height:var(--s);flex:none;border-radius:22%;background:var(--die);
+  display:grid;grid-template:repeat(3,1fr)/repeat(3,1fr);padding:14%;border:0;
+  box-shadow:0 3px 0 rgba(0,0,0,.25),inset 0 -3px 0 rgba(0,0,0,.08);transition:transform .15s ease,box-shadow .15s ease}
+.die i{display:block;width:72%;aspect-ratio:1;border-radius:50%;background:var(--pip);place-self:center;visibility:hidden}
+.die i.on{visibility:visible}
+.die.blank{opacity:.35}
+.die-slot{display:flex;flex-direction:column;align-items:center;gap:6px}
+.die-slot .tag{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--hold);visibility:hidden}
+.die-slot.held .tag{visibility:visible}
+.die-slot.held .die{transform:translateY(-4px);box-shadow:0 0 0 3px var(--hold),0 7px 0 rgba(0,0,0,.25)}
+.die.tumble{animation:tumble .45s ease-out}
+@keyframes tumble{0%{transform:rotate(-25deg) scale(.85)}60%{transform:rotate(12deg) scale(1.05)}100%{transform:none}}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.actions .btn{padding:14px 10px;font-size:16px}
+.btn-roll{background:var(--hold);color:var(--hold-ink)}
+.btn-roll .left{display:block;font-size:12px;font-weight:600;opacity:.8}
+.btn-score{background:var(--felt-deep);color:var(--felt-ink)}
+.btn:disabled{opacity:.4;cursor:default}
+
+/* Feuilles modales */
+.overlay{position:fixed;inset:0;background:rgba(5,12,9,.55);display:flex;align-items:flex-end;justify-content:center;z-index:20}
+.panel{background:var(--sheet);color:var(--ink);width:100%;max-width:520px;max-height:88%;overflow:auto;border-radius:22px 22px 0 0;
+  padding-block:20px calc(20px + env(safe-area-inset-bottom,0px));
+  padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px));display:grid;gap:14px}
+.panel h2{font:26px/1.1 var(--display);margin:0;text-wrap:balance}
+.panel p{margin:0}
+.panel .btn{width:100%}
+.rules{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:15px;margin:0}
+.rules dt{font-weight:800}
+.rules dd{margin:0;color:var(--muted)}
+.ranking{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ranking li{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--pcs)}
+.ranking .rk{font:22px var(--display);width:28px;color:var(--pc)}
+.ranking .nm{font-weight:800;font-size:18px;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ranking .pt{font:22px var(--display)}
+.ranking li:first-child{box-shadow:inset 0 0 0 3px var(--pc)}
+.toast{position:fixed;left:50%;top:calc(8px + env(safe-area-inset-top,0px));transform:translateX(-50%);background:var(--ink);color:var(--paper);
+  padding:10px 16px;border-radius:999px;font-weight:800;font-size:15px;z-index:30;white-space:nowrap;max-width:calc(100% - 32px);overflow:hidden;text-overflow:ellipsis}
+.handover{font:22px/1.1 var(--display);text-align:center}
+
+@media (prefers-reduced-motion: reduce){.die,.die.tumble{animation:none;transition:none}}
+@media (min-width:700px){#game{max-width:640px;margin:0 auto}}
+</style>
+</head>
+<body>
+
+<!-- Accueil -->
+<main id="setup">
+  <div class="brand">
+    <div class="brand-dice" aria-hidden="true" id="brandDice"></div>
+    <div>
+      <h1>Yams</h1>
+      <p>De 1 à 4 joueurs, sur un seul téléphone.</p>
+    </div>
+  </div>
+
+  <button class="resume" id="resumeBtn" hidden>
+    <div><b>Reprendre la partie</b><span id="resumeInfo"></span></div>
+    <span class="go" aria-hidden="true">→</span>
+  </button>
+
+  <section>
+    <p class="label" id="countLabel">Nombre de joueurs</p>
+    <div class="seg" role="group" aria-labelledby="countLabel" id="countSeg">
+      <button data-n="1">1</button><button data-n="2">2</button><button data-n="3">3</button><button data-n="4">4</button>
+    </div>
+  </section>
+
+  <section>
+    <p class="label">Prénoms</p>
+    <div class="names" id="names"></div>
+  </section>
+
+  <button class="btn btn-main" id="startBtn">Commencer la partie</button>
+  <button class="btn btn-ghost" id="rulesBtn1">Rappel des règles</button>
+  <p class="foot-note">Le téléphone passe de main en main : chacun lance ses dés à son tour, la feuille de marque se remplit toute seule.</p>
+</main>
+
+<!-- Partie -->
+<div id="game" hidden>
+  <header class="topbar">
+    <div class="turn-who"><span class="dot" id="whoDot"></span><b id="whoName"></b></div>
+    <span class="round num" id="roundInfo"></span>
+    <button class="icon-btn" id="menuBtn" aria-haspopup="dialog">Menu</button>
+  </header>
+
+  <div class="sheet-wrap" id="sheetWrap">
+    <table id="sheet"></table>
+  </div>
+
+  <section class="tray" aria-label="Piste de dés">
+    <div class="tray-msg" id="trayMsg" aria-live="polite"></div>
+    <div class="dice" id="dice"></div>
+    <div class="actions">
+      <button class="btn btn-roll" id="rollBtn"></button>
+      <button class="btn btn-score" id="scoreBtn" disabled>Inscrire</button>
+    </div>
+  </section>
+</div>
+
+<!-- Menu -->
+<div class="overlay" id="menu" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="menuTitle">
+    <h2 id="menuTitle">Partie en cours</h2>
+    <button class="btn btn-ghost" id="rulesBtn2">Rappel des règles</button>
+    <button class="btn btn-ghost" id="quitBtn">Abandonner la partie</button>
+    <div id="quitConfirm" hidden style="display:grid;gap:10px">
+      <p>La partie sera effacée. Les scores ne pourront pas être récupérés.</p>
+      <button class="btn btn-main" id="quitYes" style="background:var(--p1);color:var(--sheet)">Oui, effacer la partie</button>
+    </div>
+    <button class="btn btn-main" id="menuClose">Reprendre le jeu</button>
+  </div>
+</div>
+
+<!-- Règles -->
+<div class="overlay" id="rules" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="rulesTitle">
+    <h2 id="rulesTitle">Les règles du Yams</h2>
+    <p>À votre tour, lancez jusqu'à 3 fois. Touchez un dé pour le garder entre deux lancers. Ensuite, inscrivez le résultat dans une case libre : si rien ne convient, barrez une case (0 point). La partie se termine quand les 13 cases de chacun sont remplies.</p>
+    <dl class="rules">
+      <dt>As à Six</dt><dd>Total des dés de la valeur choisie.</dd>
+      <dt>Prime</dt><dd>+35 si le haut de la feuille atteint 63.</dd>
+      <dt>Brelan</dt><dd>3 dés identiques : total des 5 dés.</dd>
+      <dt>Carré</dt><dd>4 dés identiques : total des 5 dés.</dd>
+      <dt>Full</dt><dd>3 identiques + 2 identiques : 25.</dd>
+      <dt>Petite suite</dt><dd>4 valeurs qui se suivent : 30.</dd>
+      <dt>Grande suite</dt><dd>5 valeurs qui se suivent : 40.</dd>
+      <dt>Yams</dt><dd>5 dés identiques : 50.</dd>
+      <dt>Chance</dt><dd>Total des 5 dés, sans condition.</dd>
+      <dt>Prime Yams</dt><dd>+100 pour chaque Yams supplémentaire, si la case Yams vaut déjà 50.</dd>
+    </dl>
+    <button class="btn btn-main" id="rulesClose">Compris</button>
+  </div>
+</div>
+
+<!-- Fin -->
+<div class="overlay" id="end" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <h2 id="endTitle"></h2>
+    <ol class="ranking" id="ranking"></ol>
+    <button class="btn btn-main" id="againBtn">Revanche avec les mêmes joueurs</button>
+    <button class="btn btn-ghost" id="newBtn">Nouvelle partie</button>
+    <button class="btn btn-ghost" id="viewSheetBtn">Voir la feuille de marque</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(() => {
+const KEY = "yams-partie-v1";
+const PIPS = {1:[4],2:[0,8],3:[0,4,8],4:[0,2,6,8],5:[0,2,4,6,8],6:[0,2,3,5,6,8]};
+const UPPER = [
+  {k:"1",n:"As",h:"total des 1"},{k:"2",n:"Deux",h:"total des 2"},{k:"3",n:"Trois",h:"total des 3"},
+  {k:"4",n:"Quatre",h:"total des 4"},{k:"5",n:"Cinq",h:"total des 5"},{k:"6",n:"Six",h:"total des 6"}];
+const LOWER = [
+  {k:"brelan",n:"Brelan",h:"3 identiques · total"},
+  {k:"carre",n:"Carré",h:"4 identiques · total"},
+  {k:"full",n:"Full",h:"3 + 2 · 25 pts"},
+  {k:"ps",n:"Petite suite",h:"4 à la suite · 30 pts"},
+  {k:"gs",n:"Grande suite",h:"5 à la suite · 40 pts"},
+  {k:"yams",n:"Yams",h:"5 identiques · 50 pts"},
+  {k:"chance",n:"Chance",h:"total des dés"}];
+const ALL = [...UPPER, ...LOWER];
+const NAMES = {}; ALL.forEach(c => NAMES[c.k] = c.n);
+const DEFAULT_NAMES = ["Joueur 1","Joueur 2","Joueur 3","Joueur 4"];
+
+const $ = id => document.getElementById(id);
+let state = null;          // partie en cours
+let setupN = 2;
+let setupNames = ["","","",""];
+let rolling = false;
+
+/* ---------- Calcul des points ---------- */
+function counts(d){ const c=[0,0,0,0,0,0,0]; d.forEach(v=>c[v]++); return c; }
+function score(k, d){
+  const c = counts(d), s = d.reduce((a,b)=>a+b,0), mx = Math.max(...c);
+  switch(k){
+    case "brelan": return mx>=3 ? s : 0;
+    case "carre":  return mx>=4 ? s : 0;
+    case "full":   return (mx===3 && c.includes(2)) ? 25 : 0;
+    case "ps":     return [[1,2,3,4],[2,3,4,5],[3,4,5,6]].some(r=>r.every(v=>c[v])) ? 30 : 0;
+    case "gs":     return [[1,2,3,4,5],[2,3,4,5,6]].some(r=>r.every(v=>c[v])) ? 40 : 0;
+    case "yams":   return mx===5 ? 50 : 0;
+    case "chance": return s;
+    default:       return c[+k] * (+k);
+  }
+}
+const isYams = d => d.every(v => v===d[0]);
+const upperSum = p => UPPER.reduce((a,c)=>a+(p.scores[c.k]||0),0);
+const upperDone = p => UPPER.every(c => p.scores[c.k]!=null);
+const bonus = p => upperSum(p)>=63 ? 35 : 0;
+const lowerSum = p => LOWER.reduce((a,c)=>a+(p.scores[c.k]||0),0);
+const total = p => upperSum(p)+bonus(p)+lowerSum(p)+(p.yb||0);
+const filled = p => ALL.filter(c => p.scores[c.k]!=null).length;
+
+/* ---------- Sauvegarde ---------- */
+function save(){ try{ state ? localStorage.setItem(KEY, JSON.stringify(state)) : localStorage.removeItem(KEY); }catch(e){} }
+function load(){ try{ const s = JSON.parse(localStorage.getItem(KEY)); return s && s.players ? s : null; }catch(e){ return null; } }
+
+/* ---------- Dés ---------- */
+function dieEl(v, cls=""){
+  const el = document.createElement("div");
+  el.className = "die " + cls;
+  const on = v ? PIPS[v] : [];
+  for(let i=0;i<9;i++){ const p=document.createElement("i"); if(on.includes(i)) p.className="on"; el.appendChild(p); }
+  return el;
+}
+function setDie(el, v){ const on = v ? PIPS[v] : []; [...el.children].forEach((p,i)=>p.className = on.includes(i) ? "on" : ""); el.classList.toggle("blank", !v); }
+
+/* ---------- Accueil ---------- */
+function renderSetup(){
+  const bd = $("brandDice"); bd.innerHTML=""; [5,6].forEach(v=>bd.appendChild(dieEl(v)));
+  [...$("countSeg").children].forEach(b => b.setAttribute("aria-pressed", +b.dataset.n===setupN));
+  const box = $("names"); box.innerHTML = "";
+  for(let i=0;i<setupN;i++){
+    const row = document.createElement("label"); row.className="name-row";
+    row.innerHTML = `<span class="dot" style="background:var(--p${i+1})"></span>`;
+    const inp = document.createElement("input");
+    inp.id = "name"+i; inp.maxLength = 14; inp.placeholder = DEFAULT_NAMES[i]; inp.value = setupNames[i];
+    inp.autocomplete = "off"; inp.setAttribute("aria-label", "Prénom du joueur "+(i+1));
+    inp.addEventListener("input", () => setupNames[i] = inp.value);
+    row.appendChild(inp); box.appendChild(row);
+  }
+  const saved = state && !state.over ? state : null;
+  $("resumeBtn").hidden = !saved;
+  if(saved){
+    const p = saved.players[saved.current];
+    $("resumeInfo").textContent = saved.players.map(p=>p.name).join(", ") + " · manche " + Math.min(13, filled(p)+1) + "/13";
+  }
+}
+$("countSeg").addEventListener("click", e => { const b=e.target.closest("button"); if(!b) return; setupN=+b.dataset.n; renderSetup(); });
+$("startBtn").addEventListener("click", () => {
+  const names = setupNames.slice(0,setupN).map((n,i)=>n.trim()||DEFAULT_NAMES[i]);
+  newGame(names);
+});
+$("resumeBtn").addEventListener("click", showGame);
+
+function newGame(names){
+  state = { players: names.map(name=>({name, scores:{}, yb:0})), current:0, rolls:0, dice:[0,0,0,0,0], held:[false,false,false,false,false], selected:null, over:false };
+  save(); showGame(); toast("À " + state.players[0].name + " de commencer");
+}
+
+/* ---------- Vue de jeu ---------- */
+function showGame(){
+  $("setup").hidden = true; $("game").hidden = false; $("end").hidden = true;
+  wake();
+  buildDice(); render();
+}
+function showSetup(){
+  $("game").hidden = true; $("end").hidden = true; $("menu").hidden = true; $("setup").hidden = false;
+  renderSetup();
+}
+
+function buildDice(){
+  const box = $("dice"); box.innerHTML = "";
+  state.dice.forEach((v,i)=>{
+    const slot = document.createElement("div"); slot.className = "die-slot";
+    const b = dieEl(v, v ? "" : "blank");
+    const btn = document.createElement("button");
+    btn.className = b.className; btn.innerHTML = b.innerHTML; btn.id = "die"+i;
+    btn.addEventListener("click", () => toggleHold(i));
+    const tag = document.createElement("span"); tag.className="tag"; tag.textContent="gardé";
+    slot.append(btn, tag); box.appendChild(slot);
+  });
+}
+
+function render(){
+  if(!state) return;
+  const P = state.players, cur = P[state.current], ci = state.current;
+  const canScore = state.rolls>0 && !rolling;
+  // Barre du haut
+  $("whoDot").style.background = `var(--p${ci+1})`;
+  $("whoName").textContent = cur.name;
+  $("roundInfo").textContent = "Manche " + Math.min(13, filled(cur)+1) + "/13";
+
+  // Feuille de marque
+  const t = $("sheet");
+  let h = `<colgroup><col class="c-label">${P.map(()=>`<col style="width:${P.length>3?17:P.length>2?20:P.length>1?24:30}%">`).join("")}</colgroup>`;
+  h += `<thead><tr><th></th>${P.map((p,i)=>`<th class="${i===ci?"cur":""}" style="--pc:var(--p${i+1})"><span class="pn">${esc(p.name)}</span></th>`).join("")}</tr></thead><tbody>`;
+  const row = c => {
+    let r = `<tr><td class="cat"><b>${c.n}</b><small>${c.h}</small></td>`;
+    P.forEach((p,i)=>{
+      const st = `style="--pc:var(--p${i+1});--pcs:var(--p${i+1}s)"`;
+      const v = p.scores[c.k];
+      if(v!=null){ r += `<td class="v num ${i===ci?"cur":""}" ${st}>${v===0?'<span class="crossed">–</span>':v}</td>`; return; }
+      if(i===ci && canScore){
+        const pts = score(c.k, state.dice);
+        const sel = state.selected===c.k;
+        r += `<td class="v num cur" ${st}><button class="pick ${pts===0?"zero":""} ${pts>0&&isGood(c.k,pts)?"hot":""}" data-k="${c.k}" aria-pressed="${sel}" aria-label="${c.n} : ${pts} point${pts>1?"s":""}">${pts}</button></td>`;
+      } else r += `<td class="v num ${i===ci?"cur":""}" ${st}></td>`;
+    });
+    return r + "</tr>";
+  };
+  UPPER.forEach(c => h += row(c));
+  h += `<tr class="sum"><td class="cat"><b>Haut</b></td>${P.map((p,i)=>`<td class="v num ${i===ci?"cur":""}" style="--pcs:var(--p${i+1}s)">${upperSum(p)}</td>`).join("")}</tr>`;
+  h += `<tr class="sum"><td class="cat"><b>Prime 63</b></td>${P.map((p,i)=>{
+      const s=upperSum(p); let v;
+      if(s>=63) v = `<span class="ok">+35</span>`;
+      else if(upperDone(p)) v = `<span class="crossed">–</span>`;
+      else v = `<span class="need">encore ${63-s}</span>`;
+      return `<td class="v num ${i===ci?"cur":""}" style="--pcs:var(--p${i+1}s)">${v}</td>`; }).join("")}</tr>`;
+  h += `<tr class="gap"><td colspan="${P.length+1}"></td></tr>`;
+  LOWER.forEach(c => h += row(c));
+  if(P.some(p=>p.yb)) h += `<tr class="sum"><td class="cat"><b>Prime Yams</b></td>${P.map((p,i)=>`<td class="v num ${i===ci?"cur":""}" style="--pcs:var(--p${i+1}s)">${p.yb?'<span class="ok">+'+p.yb+'</span>':""}</td>`).join("")}</tr>`;
+  h += `<tr class="total"><td class="cat"><b>Total</b></td>${P.map((p,i)=>`<td class="v num" style="color:var(--p${i+1})">${total(p)}</td>`).join("")}</tr>`;
+  t.innerHTML = h + "</tbody>";
+
+  // Dés
+  state.dice.forEach((v,i)=>{
+    const el = $("die"+i); if(!el) return;
+    if(!rolling) setDie(el, v);
+    el.parentElement.classList.toggle("held", state.held[i] && state.rolls>0);
+    el.disabled = state.rolls===0 || state.rolls>=3 || rolling;
+    el.setAttribute("aria-label", v ? `Dé ${i+1} : ${v}${state.held[i]?", gardé":""}` : `Dé ${i+1}`);
+  });
+
+  // Boutons
+  const left = 3 - state.rolls;
+  const rb = $("rollBtn");
+  rb.disabled = left<=0 || rolling;
+  rb.innerHTML = state.rolls===0 ? `Lancer les dés<span class="left">3 lancers</span>`
+    : left>0 ? `Relancer<span class="left">${left} lancer${left>1?"s":""} restant${left>1?"s":""}</span>`
+    : `Plus de lancer<span class="left">choisissez une case</span>`;
+  const sb = $("scoreBtn");
+  if(state.selected){
+    const pts = score(state.selected, state.dice);
+    sb.disabled = false;
+    sb.textContent = pts===0 ? `Barrer ${NAMES[state.selected]}` : `Inscrire ${pts} en ${NAMES[state.selected]}`;
+  } else { sb.disabled = true; sb.textContent = "Inscrire"; }
+
+  // Message
+  const m = $("trayMsg");
+  if(state.rolls===0) m.innerHTML = `À <b>${esc(cur.name)}</b> de jouer`;
+  else if(state.selected) m.textContent = "Touchez « Inscrire » pour valider";
+  else if(left>0) m.textContent = "Touchez les dés à garder, ou choisissez une case";
+  else m.textContent = "Choisissez une case sur votre colonne";
+}
+
+// Met en valeur les bons coups (combinaisons réussies, haut au-dessus de la moyenne).
+function isGood(k, pts){ return isNaN(+k) ? true : pts >= (+k)*3; }
+
+$("sheet").addEventListener("click", e => {
+  const b = e.target.closest(".pick"); if(!b) return;
+  state.selected = state.selected===b.dataset.k ? null : b.dataset.k;
+  render();
+});
+
+function toggleHold(i){
+  if(state.rolls===0 || state.rolls>=3 || rolling) return;
+  state.held[i] = !state.held[i]; save(); render();
+}
+
+function roll(){
+  if(rolling || state.rolls>=3) return;
+  if(state.rolls===0) state.held = [false,false,false,false,false];
+  rolling = true; state.selected = null;
+  const free = state.dice.map((_,i)=>i).filter(i=>!state.held[i]);
+  const final = state.dice.map((v,i)=> state.held[i] ? v : 1+Math.floor(Math.random()*6));
+  buzz(15);
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  free.forEach(i => { const el=$("die"+i); el.classList.remove("tumble"); void el.offsetWidth; if(!reduce) el.classList.add("tumble"); });
+  render();
+  let n = reduce ? 0 : 6;
+  const tick = () => {
+    if(n-- > 0){ free.forEach(i => setDie($("die"+i), 1+Math.floor(Math.random()*6))); setTimeout(tick, 60); return; }
+    state.dice = final; state.rolls++; rolling = false; save(); render();
+    if(isYams(final)) { toast("Yams !"); buzz([40,60,40]); }
+  };
+  tick();
+}
+$("rollBtn").addEventListener("click", roll);
+
+$("scoreBtn").addEventListener("click", () => {
+  const k = state.selected; if(!k) return;
+  const p = state.players[state.current];
+  const pts = score(k, state.dice);
+  let msg = pts ? `${p.name} : +${pts} en ${NAMES[k]}` : `${p.name} barre ${NAMES[k]}`;
+  if(isYams(state.dice) && p.scores.yams===50 && k!=="yams"){ p.yb = (p.yb||0)+100; msg = `Prime Yams +100 pour ${p.name}`; }
+  const hadBonus = upperSum(p)>=63;
+  p.scores[k] = pts;
+  if(!hadBonus && upperSum(p)>=63) msg = `${p.name} décroche la prime de 35 !`;
+  nextTurn(msg);
+});
+
+function nextTurn(msg){
+  state.selected = null; state.rolls = 0; state.held = [false,false,false,false,false]; state.dice = [0,0,0,0,0];
+  if(state.players.every(p => filled(p)===13)){ state.over = true; save(); render(); showEnd(); return; }
+  state.current = (state.current+1) % state.players.length;
+  save(); render();
+  $("sheetWrap").scrollTo({top:0, behavior:"smooth"});
+  toast(state.players.length>1 ? `${msg} · à ${state.players[state.current].name}` : msg);
+}
+
+/* ---------- Fin de partie ---------- */
+function showEnd(){
+  const P = state.players.map((p,i)=>({p,i,t:total(p)})).sort((a,b)=>b.t-a.t);
+  const top = P[0].t, winners = P.filter(x=>x.t===top);
+  $("endTitle").textContent = state.players.length===1 ? `Partie terminée : ${top} points`
+    : winners.length>1 ? `Égalité entre ${winners.map(w=>w.p.name).join(" et ")}` : `${winners[0].p.name} gagne !`;
+  let rank = 0, prev = null;
+  $("ranking").innerHTML = P.map((x,j)=>{ if(x.t!==prev){ rank=j+1; prev=x.t; }
+    return `<li style="--pc:var(--p${x.i+1});--pcs:var(--p${x.i+1}s)"><span class="rk num">${rank}</span><span class="nm">${esc(x.p.name)}</span><span class="pt num">${x.t}</span></li>`; }).join("");
+  $("toast").hidden = true;
+  $("end").hidden = false;
+  buzz([30,40,30,40,80]);
+}
+$("againBtn").addEventListener("click", () => newGame(state.players.map(p=>p.name)));
+$("newBtn").addEventListener("click", () => { setupNames = state.players.map(p=>p.name).concat(["","","",""]).slice(0,4); setupN = state.players.length; state = null; save(); showSetup(); });
+$("viewSheetBtn").addEventListener("click", () => { $("end").hidden = true; $("trayMsg").textContent = "Partie terminée"; $("rollBtn").disabled = true; });
+
+/* ---------- Menu & règles ---------- */
+$("menuBtn").addEventListener("click", () => {
+  if(state.over){ showEnd(); return; }
+  $("quitConfirm").hidden = true; $("quitBtn").hidden = false; $("menu").hidden = false;
+});
+$("menuClose").addEventListener("click", () => $("menu").hidden = true);
+$("quitBtn").addEventListener("click", () => { $("quitConfirm").hidden = false; $("quitBtn").hidden = true; });
+$("quitYes").addEventListener("click", () => { setupNames = state.players.map(p=>p.name).concat(["","","",""]).slice(0,4); setupN = state.players.length; state = null; save(); showSetup(); });
+const openRules = () => $("rules").hidden = false;
+$("rulesBtn1").addEventListener("click", openRules);
+$("rulesBtn2").addEventListener("click", () => { $("menu").hidden = true; openRules(); });
+$("rulesClose").addEventListener("click", () => $("rules").hidden = true);
+document.querySelectorAll(".overlay").forEach(o => o.addEventListener("click", e => { if(e.target===o && o.id!=="end") o.hidden = true; }));
+
+/* ---------- Utilitaires ---------- */
+function esc(s){ return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+let toastT;
+function toast(msg){ const t=$("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(()=>t.hidden=true, 2200); }
+function buzz(p){ try{ navigator.vibrate && navigator.vibrate(p); }catch(e){} }
+let lock = null;
+async function wake(){ try{ if(!lock && navigator.wakeLock) { lock = await navigator.wakeLock.request("screen"); lock.addEventListener("release", ()=>lock=null); } }catch(e){} }
+document.addEventListener("visibilitychange", () => { if(document.visibilityState==="visible" && state && !$("game").hidden) wake(); });
+
+/* ---------- Démarrage ---------- */
+function start(data){
+  state = (data && data.state) || load();
+  if(state && state.over){ state = null; save(); }
+  renderSetup();
+  if(state) { setupN = state.players.length; renderSetup(); }
+}
+window.claude?.hot?.snapshot?.(() => ({ state }));
+window.claude?.hot?.ready ? window.claude.hot.ready(start) : start(window.claude?.hot?.data ?? {});
+
+if("serviceWorker" in navigator && /^https?:$/.test(location.protocol)){
+  navigator.serviceWorker.register("sw.js").catch(()=>{});
+}
+})();
+</script>
+</body>
+</html>
